@@ -9,15 +9,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fad582f4b9e86b6caa621cabeb0963332d92eea04729ab12892c2533951e6440"
 
 [[package]]
-name = "prime_time"
-version = "0.1.0"
-dependencies = [
- "primes",
- "serde",
- "serde_json",
-]
-
-[[package]]
 name = "primes"
 version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -30,6 +21,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "57a8eca9f9c4ffde41714334dee777596264c7825420f521abc92b5b5deb63a5"
 dependencies = [
  "unicode-ident",
+]
+
+[[package]]
+name = "protozackers"
+version = "0.1.0"
+dependencies = [
+ "primes",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]

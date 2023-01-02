@@ -1,36 +1,15 @@
 extern crate serde_json;
+extern crate primes;
 
-use std::env;
 use std::io::{Read, Write};
-use std::net::{Shutdown, SocketAddr, TcpListener, TcpStream};
-use std::thread;
+use std::net::{Shutdown, TcpStream};
 
 use serde::{Deserialize, Serialize};
 
-const DEFAULT_PORT: u16 = 8096;
-const BUFFER_SIZE: usize = 4096;
-const ASCII_NEWLINE: u8 = 10;
-const MALFORMED_RESPONSE: [u8; 5] = [69, 82, 82, 79, 82];
-const SHOULD_ERROR_ON_TRAILING: bool = true;
+use crate::{ASCII_NEWLINE, BUFFER_SIZE};
 
-fn main() {
-    let args: Vec<String> = env::args().collect();
-    let port: u16 = if args.len() >= 2 { args[1].parse::<u16>().expect("Invalid Port Number.") } else { DEFAULT_PORT };
-    let address: SocketAddr = SocketAddr::from(([0, 0, 0, 0], port));
-    let listener: TcpListener = TcpListener::bind(address).expect("Could not bind to port.");
-    println!("Listening to connections on port {port}...");
-    for stream in listener.incoming() {
-        match stream {
-            Ok(stream) => {
-                println!("Handling incoming TCP connection...");
-                thread::spawn(|| {
-                    handle_prime_request(stream);
-                });
-            },
-            Err(err) => eprintln!("Incoming TCP connection stream errored... {:?}", err),
-        };
-    }
-}
+const MALFORMED_RESPONSE: [u8; 5] = [69, 82, 82, 79, 82]; // "ERROR"
+const SHOULD_ERROR_ON_TRAILING: bool = true;
 
 #[derive(Deserialize, Debug)]
 struct PrimeRequest {
@@ -44,7 +23,7 @@ struct PrimeResponse {
     prime: bool,
 }
 
-fn handle_prime_request(mut stream: TcpStream) {
+pub fn handle_stream(mut stream: TcpStream) {
     let mut lines: Vec<u8> = vec![];
     let mut buffer: [u8; BUFFER_SIZE] = [0; BUFFER_SIZE];
 

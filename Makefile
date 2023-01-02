@@ -21,7 +21,7 @@ usage:
 ## Build
 
 TARGET := "x86_64-unknown-linux-gnu"
-BINARY := "keystore"
+BINARY := "protozackers"
 release: ## Build a tiny release version
 release:
 > rustup toolchain install nightly

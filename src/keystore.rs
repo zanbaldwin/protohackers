@@ -1,28 +1,7 @@
-use std::env;
 use std::io::{Read, Write};
-use std::net::{Shutdown, SocketAddr, TcpListener, TcpStream};
-use std::thread;
+use std::net::{Shutdown, SocketAddr, TcpStream};
 
-const DEFAULT_PORT: u16 = 8096;
 const BUFFER_SIZE: usize = 4096;
-
-fn main() {
-    let args: Vec<String> = env::args().collect();
-    let port: u16 = if args.len() >= 2 { args[1].parse::<u16>().expect("Invalid Port Number.") } else { DEFAULT_PORT };
-    let address: SocketAddr = SocketAddr::from(([0, 0, 0, 0], port));
-    let listener: TcpListener = TcpListener::bind(address).expect("Could not bind to port.");
-    println!("Listening to connections on port {port}...");
-    for stream in listener.incoming() {
-        match stream {
-            Ok(stream) => {
-                thread::spawn(|| {
-                    handle_keystore_connection(stream);
-                });
-            },
-            Err(err) => eprintln!("Incoming TCP connection stream errored... {err:?}"),
-        };
-    }
-}
 
 struct AssetPrice {
     timestamp: i32,
@@ -34,7 +13,7 @@ impl AssetPrice {
     }
 }
 
-fn handle_keystore_connection(mut stream: TcpStream) {
+pub fn handle_stream(mut stream: TcpStream) {
     let mut store: Vec<AssetPrice> = vec![];
     let mut queue: Vec<u8> = vec![];
     let mut input: [u8; BUFFER_SIZE] = [0; BUFFER_SIZE];
