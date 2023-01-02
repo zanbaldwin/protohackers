@@ -1,7 +1,10 @@
+use protozackers::{server, BUFFER_SIZE};
 use std::io::{Read, Write};
 use std::net::{Shutdown, TcpStream};
 
-const BUFFER_SIZE: usize = 4096;
+fn main() {
+    server::run(handle_stream, None);
+}
 
 // Smoke Test (Echo Server)
 pub fn handle_stream(mut stream: TcpStream) {
@@ -14,7 +17,7 @@ pub fn handle_stream(mut stream: TcpStream) {
                 stream.flush().unwrap();
                 stream.shutdown(Shutdown::Both).unwrap();
                 return;
-            },
+            }
             Ok(n) => contents.extend_from_slice(&buffer[..n]),
             Err(err) => panic!("Error processing stream: {err:?}"),
         }

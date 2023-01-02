@@ -1,12 +1,14 @@
-extern crate serde_json;
 extern crate primes;
+extern crate serde_json;
 
+use protozackers::{server, ASCII_NEWLINE, BUFFER_SIZE};
+use serde::{Deserialize, Serialize};
 use std::io::{Read, Write};
 use std::net::{Shutdown, TcpStream};
 
-use serde::{Deserialize, Serialize};
-
-use crate::{ASCII_NEWLINE, BUFFER_SIZE};
+fn main() {
+    server::run(handle_stream, None);
+}
 
 const MALFORMED_RESPONSE: [u8; 5] = [69, 82, 82, 79, 82]; // "ERROR"
 const SHOULD_ERROR_ON_TRAILING: bool = true;
@@ -36,13 +38,16 @@ pub fn handle_stream(mut stream: TcpStream) {
                 Err(_) => {
                     malformed_request(stream);
                     return;
-                },
+                }
             };
             if prime_request.method != *"isPrime" {
                 malformed_request(stream);
                 return;
             }
-            let prime_response: PrimeResponse = PrimeResponse { method: "isPrime".to_string(), prime: is_prime(prime_request.number) };
+            let prime_response: PrimeResponse = PrimeResponse {
+                method: "isPrime".to_string(),
+                prime: is_prime(prime_request.number),
+            };
             let mut response_str = match serde_json::to_string(&prime_response) {
                 Ok(string) => string,
                 Err(err) => panic!("{:?}", err),
@@ -51,13 +56,13 @@ pub fn handle_stream(mut stream: TcpStream) {
             stream.write_all(&response_str.into_bytes()).unwrap();
 
             lines.drain(0..position + 1);
-        };
+        }
 
         match stream.read(&mut buffer) {
             Ok(0) => {
                 end_request(stream, &lines);
                 return;
-            },
+            }
             Ok(n) => lines.extend_from_slice(&buffer[0..n]),
             Err(err) => panic!("{:?}", err),
         };

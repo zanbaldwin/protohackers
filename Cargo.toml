@@ -3,12 +3,25 @@ name = "protozackers"
 version = "0.1.0"
 edition = "2021"
 
+[[bin]]
+name = "echo"
+path = "src/bin/echo.rs"
+
+[[bin]]
+name = "primes"
+path = "src/bin/primes.rs"
+
+[[bin]]
+name = "keystore"
+path = "src/bin/keystore.rs"
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 primes = "0.3.0"
 serde = { version = "1.0.152", features = ["derive"] }
 serde_json = "1.0.91"
+uuid = { version = "1.2.2", features = ["v4"] }
 
 [profile.tiny]
 inherits = "release"

@@ -1,7 +1,10 @@
+use protozackers::{server, BUFFER_SIZE};
 use std::io::{Read, Write};
 use std::net::{Shutdown, SocketAddr, TcpStream};
 
-const BUFFER_SIZE: usize = 4096;
+fn main() {
+    server::run(handle_stream, None);
+}
 
 struct AssetPrice {
     timestamp: i32,
@@ -31,7 +34,7 @@ pub fn handle_stream(mut stream: TcpStream) {
                     let response: &[u8] = &result.to_be_bytes();
                     eprintln!("Response: {result} ({response:?}");
                     stream.write_all(response).unwrap();
-                },
+                }
                 _ => break 'connected,
             }
         }
@@ -65,7 +68,8 @@ fn handle_query(message: &[u8], store: &[AssetPrice], session: &SocketAddr) -> i
         &message[1..5],
         &message[5..9],
     );
-    let prices_within_daterange = store.iter()
+    let prices_within_daterange = store
+        .iter()
         .filter(|asset: &&AssetPrice| -> bool { asset.timestamp >= min && asset.timestamp <= max })
         .map(|asset: &AssetPrice| -> i32 { asset.price.to_owned() });
     let mut count: usize = 0;
