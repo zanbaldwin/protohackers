@@ -15,6 +15,10 @@ path = "src/bin/primes.rs"
 name = "keystore"
 path = "src/bin/keystore.rs"
 
+[[bin]]
+name = "chat"
+path = "src/bin/chat.rs"
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
