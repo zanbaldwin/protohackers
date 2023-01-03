@@ -43,7 +43,7 @@ pub fn handle_stream(mut stream: TcpStream) {
             let response: Vec<u8> = match process_json(&line) {
                 Ok(response) => response,
                 Err(response) => {
-                    let _ = stream.write(response);
+                    let _ = stream.write_all(response);
                     break 'connected;
                 },
             };
@@ -55,13 +55,14 @@ pub fn handle_stream(mut stream: TcpStream) {
     let _ = stream.shutdown(Shutdown::Both);
 }
 
-fn process_json(json: &[u8]) -> Result<Vec<u8>, &[u8]> {
+fn process_json(json: &[u8]) -> Result<Vec<u8>, &[u8; 5]> {
+    let err: Result<Vec<u8>, &[u8 ;5]> = Err(&MALFORMED_RESPONSE);
     let request: PrimeRequest = match serde_json::from_slice(json) {
         Ok(request) => request,
-        Err(_) => return Err(&MALFORMED_RESPONSE),
+        Err(_) => return err,
     };
     if request.method != *"isPrime" {
-        return Err(&MALFORMED_RESPONSE);
+        return err;
     }
     let result = PrimeResponse {
         method: "isPrime".to_string(),
@@ -69,7 +70,7 @@ fn process_json(json: &[u8]) -> Result<Vec<u8>, &[u8]> {
     };
     let response: String = match serde_json::to_string(&result) {
         Ok(response) => response,
-        Err(_) => return Err(&MALFORMED_RESPONSE),
+        Err(_) => return err,
     };
     Ok(response.into_bytes())
 }

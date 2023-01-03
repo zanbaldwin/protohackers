@@ -58,7 +58,7 @@ impl Client {
 }
 
 fn main() {
-    let listener = server::get_listener(None);
+    let listener = server::get_tcp_listener(None);
     let mut clients: HashMap<Uuid, Client> = HashMap::new();
     let (transmitter, receiver) = mpsc::channel::<Command>();
 
@@ -101,7 +101,7 @@ fn handle_command(command: Command, clients: &mut HashMap<Uuid, Client>) {
                 .collect();
             if let Some(client) = clients.get_mut(&id) {
                 client.set_name(name);
-                let _ = client.stream.write_all(&string_to_vec(format!("* The room contains: {}", existing_names.join(", "))));
+                let _ = client.stream.write_all(&string_to_vec(format!("* The room contains: {}\n", existing_names.join(", "))));
             }
             broadcast_to_joined_clients_except(clients, id, &broadcast_message);
         },
@@ -173,7 +173,7 @@ fn handle_stream(id: Uuid, mut stream: TcpStream, transmitter: Sender<Command>) 
 
 fn validate_name(line: Vec<u8>) -> Result<String, ()> {
     if let Ok(name) = String::from_utf8(line) {
-        if name.chars().all(char::is_alphanumeric) && name.is_empty() {
+        if name.chars().all(char::is_alphanumeric) && !name.is_empty() {
             return Ok(name);
         }
     }
