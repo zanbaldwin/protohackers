@@ -19,6 +19,10 @@ path = "src/bin/keystore.rs"
 name = "chat"
 path = "src/bin/chat.rs"
 
+[[bin]]
+name = "db"
+path = "src/bin/db.rs"
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
