@@ -20,14 +20,16 @@ usage:
 
 ## Build
 
-TARGET := "x86_64-unknown-linux-gnu"
-BINARY := "protozackers"
+TARGET := x86_64-unknown-linux-gnu
+BINARIES := echo primes keystore chat db
 release: ## Build a tiny release version
 release:
 > rustup toolchain install nightly
 > rustup component add rust-src --toolchain nightly
 > cargo +nightly build -Z "build-std=std,panic_abort" --target "$(TARGET)" --profile "tiny"
-> rm -f "$(THIS_DIR)/target/$(BINARY)"
-> upx --best -o "$(THIS_DIR)/target/$(BINARY)" "$(THIS_DIR)/target/$(TARGET)/tiny/$(BINARY)"
+> for BINARY in $(BINARIES); do
+>     rm -f "$(THIS_DIR)/target/$${BINARY}"
+>     upx --best -o "$(THIS_DIR)/target/$${BINARY}" "$(THIS_DIR)/target/$(TARGET)/tiny/$${BINARY}"
+> done
 .PHONY: release
 .SILENT: release
