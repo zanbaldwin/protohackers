@@ -1,0 +1,90 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug 0: 'echo'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=echo",
+                    "--package=protozackers"
+                ],
+                "filter": {
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug 1: 'primes'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=primes",
+                    "--package=protozackers"
+                ],
+                "filter": {
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug 2: 'keystore'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=keystore",
+                    "--package=protozackers"
+                ],
+                "filter": {
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug 3: 'chat'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=chat",
+                    "--package=protozackers"
+                ],
+                "filter": {
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug 4: 'db'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=db",
+                    "--package=protozackers"
+                ],
+                "filter": {
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}
