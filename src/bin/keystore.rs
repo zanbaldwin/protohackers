@@ -4,7 +4,7 @@ use std::net::{Shutdown, TcpStream};
 use std::vec::Drain;
 
 fn main() {
-    server::run(handle_stream, None);
+    server::run(handle_stream, None, false);
 }
 
 struct AssetPrice {

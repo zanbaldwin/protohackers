@@ -1,6 +1,6 @@
 extern crate uuid;
 
-use protozackers::{server, ASCII_NEWLINE, BUFFER_SIZE};
+use protozackers::{server, ASCII_NEWLINE, BUFFER_SIZE, SLOW_DOWN_MILLISECONDS};
 use std::collections::HashMap;
 use std::io::{Read, Write, ErrorKind};
 use std::net::{Shutdown, TcpStream};
@@ -10,7 +10,6 @@ use uuid::Uuid;
 use std::sync::mpsc::{self, Sender};
 
 const WELCOME_MESSAGE: &str = "Welcome to budgetchat! What shall I call you?\n";
-const SLOW_DOWN_MILLISECONDS: u64 = 100;
 
 fn string_to_vec(bytes: String) -> Vec<u8> {
     let mut vec: Vec<u8> = vec![];

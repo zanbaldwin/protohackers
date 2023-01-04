@@ -1,5 +1,7 @@
-use protozackers::{server};
+use protozackers::{server, SLOW_DOWN_MILLISECONDS};
 use std::collections::HashMap;
+use std::thread;
+use std::time::Duration;
 
 const BUFFER_SIZE: usize = 1_000;
 const VERSION_KEY: &[u8] = b"version";
@@ -35,8 +37,8 @@ fn main() {
     let socket = server::get_udp_listener(None);
     let mut database = Database::new();
 
+    let mut buffer = [0u8; BUFFER_SIZE];
     loop {
-        let mut buffer = [0u8; BUFFER_SIZE];
         match socket.recv_from(&mut buffer) {
             Ok((length, source)) => {
                 let mut request: Vec<u8> = vec![];
@@ -54,23 +56,19 @@ fn main() {
                     // Remove the assignment operator (=).
                     key.pop();
                     database.insert(key, request);
-                } else {
-                    match database.query(&request) {
-                        Some(value) => {
-                            let mut response: Vec<u8> = vec![];
-                            response.extend_from_slice(&request);
-                            response.push(b'=');
-                            response.extend_from_slice(value);
-                            if SHOULD_HANDLE_NEWLINES {
-                                response.push(b'\n');
-                            }
-                            let _ = socket.send_to(&response, source);
-                        },
-                        None => (),
-                    };
+                } else if let Some(value) = database.query(&request) {
+                    let mut response: Vec<u8> = vec![];
+                    response.extend_from_slice(&request);
+                    response.push(b'=');
+                    response.extend_from_slice(value);
+                    if SHOULD_HANDLE_NEWLINES {
+                        response.push(b'\n');
+                    }
+                    let _ = socket.send_to(&response, source);
                 }
             },
             Err(_) => continue,
         };
+        thread::sleep(Duration::from_millis(SLOW_DOWN_MILLISECONDS));
     }
 }

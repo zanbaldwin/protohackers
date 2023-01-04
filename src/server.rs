@@ -1,8 +1,9 @@
-use crate::DEFAULT_PORT;
+use crate::{DEFAULT_PORT, SLOW_DOWN_MILLISECONDS};
 
 use std::env;
-use std::net::{SocketAddr, TcpListener, TcpStream, Incoming, UdpSocket};
+use std::net::{SocketAddr, TcpListener, TcpStream, UdpSocket};
 use std::thread;
+use std::time::Duration;
 
 pub fn get_tcp_listener(port: Option<u16>) -> TcpListener {
     let port = match port {
@@ -27,30 +28,24 @@ pub fn get_udp_listener(port: Option<u16>) -> UdpSocket {
     listener
 }
 
-pub fn run<F>(stream_handler: F, port: Option<u16>)
+pub fn run<F>(stream_handler: F, port: Option<u16>, blocking: bool) -> !
 where
     F: Fn(TcpStream) + Clone + Send + Sync + 'static,
 {
     let listener = get_tcp_listener(port);
-    for stream in listener.incoming() {
-        match stream {
-            Ok(stream) => {
-                let thread_handler = stream_handler.clone();
+    loop {
+        if let Ok((stream, _)) = listener.accept() {
+            let thread_handler = stream_handler.clone();
+            if blocking {
+                thread_handler(stream)
+            } else {
                 thread::spawn(move || {
                     thread_handler(stream);
                 });
             }
-            Err(err) => eprintln!("Incoming TCP connection stream errored... {err:?}"),
-        };
+        }
+        thread::sleep(Duration::from_millis(SLOW_DOWN_MILLISECONDS));
     }
-}
-
-pub fn run_custom<F>(streams_handler: F, port: Option<u16>)
-where
-    F: FnOnce(Incoming),
-{
-    let listener = get_tcp_listener(port);
-    streams_handler(listener.incoming());
 }
 
 pub fn get_port() -> u16 {

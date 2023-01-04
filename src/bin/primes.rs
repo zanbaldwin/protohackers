@@ -7,7 +7,7 @@ use std::io::{Read, Write, ErrorKind};
 use std::net::{Shutdown, TcpStream};
 
 fn main() {
-    server::run(handle_stream, None);
+    server::run(handle_stream, None, false);
 }
 
 const MALFORMED_RESPONSE: [u8; 5] = [69, 82, 82, 79, 82]; // "ERROR"
