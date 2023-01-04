@@ -85,6 +85,23 @@
             },
             "args": [],
             "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug 5: 'mob'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=mob",
+                    "--package=protozackers"
+                ],
+                "filter": {
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
         }
     ]
 }
