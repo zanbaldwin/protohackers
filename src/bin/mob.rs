@@ -1,11 +1,10 @@
-use protozackers::{server, BUFFER_SIZE, SLOW_DOWN_MILLISECONDS};
+use protozackers::{server, BUFFER_SIZE, THREAD_SLOW_DOWN};
 use regex::bytes::{Regex};
 use core::panic;
 use std::borrow::{Cow};
 use std::io::{Read, Write, ErrorKind};
 use std::net::{Shutdown, TcpStream};
 use std::thread;
-use std::time::Duration;
 
 const UPSTREAM_SERVER: &str = "chat.protohackers.com:16963";
 const BOGUSCOIN_MATCHER: &str = "^7[a-zA-Z0-9]{25,34}$";
@@ -39,7 +38,7 @@ fn main() {
             thread::spawn(move || handle_stream(upstream, victim_writer));
             thread::spawn(move || handle_stream(victim, upstream_writer));
         }
-        thread::sleep(Duration::from_millis(SLOW_DOWN_MILLISECONDS));
+        thread::sleep(THREAD_SLOW_DOWN);
     }
 }
 
@@ -59,7 +58,7 @@ fn handle_stream(mut upstream: TcpStream, mut downstream: TcpStream) {
             _ = downstream.write_all(&spoofer.replace(queue.drain(..position + 1).as_slice()));
         }
 
-        thread::sleep(Duration::from_millis(SLOW_DOWN_MILLISECONDS));
+        thread::sleep(THREAD_SLOW_DOWN);
     }
     _ = upstream.shutdown(Shutdown::Both);
     _ = downstream.shutdown(Shutdown::Both);

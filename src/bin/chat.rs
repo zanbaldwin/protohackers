@@ -1,11 +1,10 @@
 extern crate uuid;
 
-use protozackers::{server, ASCII_NEWLINE, BUFFER_SIZE, SLOW_DOWN_MILLISECONDS};
+use protozackers::{server, ASCII_NEWLINE, BUFFER_SIZE, THREAD_SLOW_DOWN};
 use std::collections::HashMap;
 use std::io::{Read, Write, ErrorKind};
 use std::net::{Shutdown, TcpStream};
 use std::thread;
-use std::time::Duration;
 use uuid::Uuid;
 use std::sync::mpsc::{self, Sender};
 
@@ -86,7 +85,7 @@ fn main() {
             handle_command(command, &mut clients);
         }
 
-        thread::sleep(Duration::from_millis(SLOW_DOWN_MILLISECONDS));
+        thread::sleep(THREAD_SLOW_DOWN);
     }
 }
 
@@ -164,7 +163,7 @@ fn handle_stream(id: Uuid, mut stream: TcpStream, transmitter: Sender<Command>) 
         }
 
         // Wait.
-        thread::sleep(Duration::from_millis(SLOW_DOWN_MILLISECONDS));
+        thread::sleep(THREAD_SLOW_DOWN);
     }
 
     let _ = stream.shutdown(Shutdown::Both);

@@ -102,6 +102,23 @@
             },
             "args": [],
             "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug 5: 'line'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=line",
+                    "--package=protozackers"
+                ],
+                "filter": {
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
         }
     ]
 }

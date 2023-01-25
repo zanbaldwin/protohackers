@@ -1,7 +1,6 @@
-use protozackers::{server, SLOW_DOWN_MILLISECONDS};
+use protozackers::{server, THREAD_SLOW_DOWN};
 use std::collections::HashMap;
 use std::thread;
-use std::time::Duration;
 
 const BUFFER_SIZE: usize = 1_000;
 const VERSION_KEY: &[u8] = b"version";
@@ -69,6 +68,6 @@ fn main() {
             },
             Err(_) => continue,
         };
-        thread::sleep(Duration::from_millis(SLOW_DOWN_MILLISECONDS));
+        thread::sleep(THREAD_SLOW_DOWN);
     }
 }

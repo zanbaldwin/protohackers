@@ -1,9 +1,8 @@
-use crate::{DEFAULT_PORT, SLOW_DOWN_MILLISECONDS};
+use crate::{DEFAULT_PORT, THREAD_SLOW_DOWN};
 
 use std::env;
 use std::net::{SocketAddr, TcpListener, TcpStream, UdpSocket};
 use std::thread;
-use std::time::Duration;
 
 pub fn get_tcp_listener(port: Option<u16>) -> TcpListener {
     let port = match port {
@@ -36,15 +35,12 @@ where
     loop {
         if let Ok((stream, _)) = listener.accept() {
             let thread_handler = stream_handler.clone();
-            if blocking {
-                thread_handler(stream)
-            } else {
-                thread::spawn(move || {
-                    thread_handler(stream);
-                });
-            }
+            match blocking {
+                true => thread_handler(stream),
+                false => _ = thread::spawn(move || thread_handler(stream)),
+            };
         }
-        thread::sleep(Duration::from_millis(SLOW_DOWN_MILLISECONDS));
+        thread::sleep(THREAD_SLOW_DOWN);
     }
 }
 

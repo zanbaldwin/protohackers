@@ -22,7 +22,7 @@ THIS_MAKEFILE:=$(notdir $(THIS_MAKEFILE_PATH))
 ## Build
 
 TARGET := x86_64-unknown-linux-gnu
-BINARIES := echo primes keystore chat db mob
+BINARIES := echo primes keystore chat db mob speed
 shrink: ## Build Tiny Distibution Binaries
 shrink:
 > rustup target add "$(TARGET)"

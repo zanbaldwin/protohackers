@@ -6,26 +6,24 @@ edition = "2021"
 [[bin]]
 name = "echo"
 path = "src/bin/echo.rs"
-
 [[bin]]
 name = "primes"
 path = "src/bin/primes.rs"
-
 [[bin]]
 name = "keystore"
 path = "src/bin/keystore.rs"
-
 [[bin]]
 name = "chat"
 path = "src/bin/chat.rs"
-
 [[bin]]
 name = "db"
 path = "src/bin/db.rs"
-
 [[bin]]
 name = "mob"
 path = "src/bin/mob.rs"
+[[bin]]
+name = "speed"
+path = "src/bin/speed.rs"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -34,6 +32,7 @@ primes = "0.3.0"
 regex = "1.7.0"
 serde = { version = "1.0.152", features = ["derive"] }
 serde_json = "1.0.91"
+tokio = { version = "1.24.1", default-features = false, features = ["time"] }
 uuid = { version = "1.2.2", features = ["v4"] }
 
 [profile.release]
