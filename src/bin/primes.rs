@@ -3,7 +3,7 @@ extern crate serde_json;
 
 use protozackers::{server, ASCII_NEWLINE, BUFFER_SIZE};
 use serde::{Deserialize, Serialize};
-use std::io::{Read, Write, ErrorKind};
+use std::io::{ErrorKind, Read, Write};
 use std::net::{Shutdown, TcpStream};
 
 fn main() {
@@ -45,7 +45,7 @@ pub fn handle_stream(mut stream: TcpStream) {
                 Err(response) => {
                     let _ = stream.write_all(response);
                     break 'connected;
-                },
+                }
             };
 
             let _ = stream.write_all(&response);
@@ -56,7 +56,7 @@ pub fn handle_stream(mut stream: TcpStream) {
 }
 
 fn process_json(json: &[u8]) -> Result<Vec<u8>, &[u8; 5]> {
-    let err: Result<Vec<u8>, &[u8 ;5]> = Err(&MALFORMED_RESPONSE);
+    let err: Result<Vec<u8>, &[u8; 5]> = Err(&MALFORMED_RESPONSE);
     let request: PrimeRequest = match serde_json::from_slice(json) {
         Ok(request) => request,
         Err(_) => return err,
@@ -66,7 +66,11 @@ fn process_json(json: &[u8]) -> Result<Vec<u8>, &[u8; 5]> {
     }
     let result = PrimeResponse {
         method: "isPrime".to_string(),
-        prime: if request.number.fract() == 0.0 { primes::is_prime(request.number as u64) } else { false },
+        prime: if request.number.fract() == 0.0 {
+            primes::is_prime(request.number as u64)
+        } else {
+            false
+        },
     };
     let response: String = match serde_json::to_string(&result) {
         Ok(response) => response,

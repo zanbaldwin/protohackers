@@ -1,5 +1,5 @@
 use protozackers::{server, BUFFER_SIZE};
-use std::io::{Read, Write, ErrorKind};
+use std::io::{ErrorKind, Read, Write};
 use std::net::{Shutdown, TcpStream};
 use std::vec::Drain;
 

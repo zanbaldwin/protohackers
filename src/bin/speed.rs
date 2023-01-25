@@ -1,14 +1,14 @@
 extern crate uuid;
 
 use protozackers::{server, BUFFER_SIZE, THREAD_SLOW_DOWN};
-use tokio::time::Interval;
-use std::cmp::{min, max};
+use std::cmp::{max, min};
 use std::collections::HashMap;
 use std::io::{ErrorKind, Read, Write};
-use std::net::{TcpStream, Shutdown, TcpListener};
+use std::net::{Shutdown, TcpListener, TcpStream};
 use std::sync::mpsc::{self, Sender};
 use std::thread;
 use std::time::Duration;
+use tokio::time::Interval;
 use uuid::Uuid;
 
 const SPEED_ERROR_MARGIN: f32 = 0.4;
@@ -53,20 +53,35 @@ struct Report {
     limit: SpeedLimit,
 }
 impl Report {
-    fn new(plate: PlateNumber, timestamp: Timestamp, road: RoadId, mile_marker: MileMarker, limit: SpeedLimit) -> Self {
-        Self { plate, timestamp, road, mile_marker, limit }
+    fn new(
+        plate: PlateNumber,
+        timestamp: Timestamp,
+        road: RoadId,
+        mile_marker: MileMarker,
+        limit: SpeedLimit,
+    ) -> Self {
+        Self {
+            plate,
+            timestamp,
+            road,
+            mile_marker,
+            limit,
+        }
     }
 
     fn calculate_speed(&self, previous: &Self) -> Option<SpeedMph> {
         if self.road == previous.road {
-            let distance_in_miles: f32 = (max(self.mile_marker, previous.mile_marker) - min(self.mile_marker, previous.mile_marker)) as f32;
-            let seconds_taken: f32 = (max(self.timestamp, previous.timestamp) - min(self.timestamp, previous.timestamp)) as f32;
+            let distance_in_miles: f32 = (max(self.mile_marker, previous.mile_marker)
+                - min(self.mile_marker, previous.mile_marker))
+                as f32;
+            let seconds_taken: f32 = (max(self.timestamp, previous.timestamp)
+                - min(self.timestamp, previous.timestamp))
+                as f32;
             let speed_in_mph: f32 = distance_in_miles / (seconds_taken / 3600.0);
             Some(speed_in_mph)
         } else {
             None
         }
-
     }
 }
 #[derive(Clone)]
@@ -82,7 +97,13 @@ impl Ticket {
         let speed: RecordedSpeed = (speed as RecordedSpeed) * 100;
         let plate = current.plate.to_owned();
         let road = current.road.to_owned();
-        Self { plate, road, report1: previous, report2: current, speed }
+        Self {
+            plate,
+            road,
+            report1: previous,
+            report2: current,
+            speed,
+        }
     }
 }
 
@@ -107,8 +128,13 @@ struct Connection {
     heartbeat: Option<u32>,
 }
 impl Connection {
-    fn new (stream: TcpStream) -> Self {
-        Self { id: Uuid::new_v4(), stream, client: None, heartbeat: None }
+    fn new(stream: TcpStream) -> Self {
+        Self {
+            id: Uuid::new_v4(),
+            stream,
+            client: None,
+            heartbeat: None,
+        }
     }
 }
 
@@ -131,7 +157,6 @@ impl Application {
         loop {
             // Accept connection.
             if let Ok((stream, addr)) = listener.accept() {
-
                 let connection = Connection::new(stream);
 
                 eprintln!("Accepting new connection {} from {addr}...", connection.id);
@@ -143,7 +168,7 @@ impl Application {
                     Err(_) => {
                         _ = connection.stream.shutdown(Shutdown::Both);
                         continue;
-                    },
+                    }
                 };
 
                 self.connections.insert(connection.id, connection);
@@ -162,22 +187,27 @@ impl Application {
         if let Some(connection) = self.connections.get_mut(&message.from) {
             eprintln!("{}: {:?}", connection.id, message.input);
             match message.input {
-                ClientInput::Plate(plate_number, timestamp) => {
-                    match &connection.client {
-                        Some(Client::Camera(camera)) => {
-                            let report: Report = Report::new(plate_number, timestamp, camera.road, camera.mile_marker, camera.limit);
-                            if let Some(ticket) = self.process_report(report) {
-                                self.issue_ticket(ticket);
-                            }
-                        },
-                        Some(_) => self.close_connection(&message.from, Some(ServerError::NotACamera)),
-                        None => self.close_connection(&message.from, Some(ServerError::NotDeclared)),
+                ClientInput::Plate(plate_number, timestamp) => match &connection.client {
+                    Some(Client::Camera(camera)) => {
+                        let report: Report = Report::new(
+                            plate_number,
+                            timestamp,
+                            camera.road,
+                            camera.mile_marker,
+                            camera.limit,
+                        );
+                        if let Some(ticket) = self.process_report(report) {
+                            self.issue_ticket(ticket);
+                        }
                     }
+                    Some(_) => self.close_connection(&message.from, Some(ServerError::NotACamera)),
+                    None => self.close_connection(&message.from, Some(ServerError::NotDeclared)),
                 },
 
                 ClientInput::WantHeartbeat(deciseconds) => {
                     if connection.heartbeat.is_some() {
-                        return self.close_connection(&message.from, Some(ServerError::AlreadyBeating));
+                        return self
+                            .close_connection(&message.from, Some(ServerError::AlreadyBeating));
                     }
 
                     connection.heartbeat = Some(deciseconds);
@@ -187,24 +217,35 @@ impl Application {
                             Err(_) => {
                                 self.close_connection(&message.from, Some(ServerError::Unknown));
                                 return;
-                            },
+                            }
                         };
                         let interval = Duration::from_millis((deciseconds as u64) * 100);
-                        eprintln!("Pinging {} every {interval:?}.", heartbeat_stream.peer_addr().unwrap());
-                        thread::spawn(move || handle_heartbeat_interval(heartbeat_stream, interval));
+                        eprintln!(
+                            "Pinging {} every {interval:?}.",
+                            heartbeat_stream.peer_addr().unwrap()
+                        );
+                        thread::spawn(move || {
+                            handle_heartbeat_interval(heartbeat_stream, interval)
+                        });
                     }
-                },
+                }
 
                 ClientInput::IAmCamera(road, mile_marker, limit) => {
                     if connection.client.is_some() {
-                        return self.close_connection(&message.from, Some(ServerError::AlreadyDeclared));
+                        return self
+                            .close_connection(&message.from, Some(ServerError::AlreadyDeclared));
                     }
-                    connection.client = Some(Client::Camera(Camera {road, mile_marker, limit}));
-                },
+                    connection.client = Some(Client::Camera(Camera {
+                        road,
+                        mile_marker,
+                        limit,
+                    }));
+                }
 
                 ClientInput::IAmDispatcher(roads) => {
                     if connection.client.is_some() {
-                        return self.close_connection(&message.from, Some(ServerError::AlreadyDeclared));
+                        return self
+                            .close_connection(&message.from, Some(ServerError::AlreadyDeclared));
                     }
                     let dispatcher = Dispatcher { roads };
                     for road in &dispatcher.roads {
@@ -215,9 +256,11 @@ impl Application {
                         }
                     }
                     connection.client = Some(Client::Dispatcher(dispatcher));
-                },
+                }
 
-                ClientInput::StreamErrored => self.close_connection(&message.from, Some(ServerError::InvalidStream)),
+                ClientInput::StreamErrored => {
+                    self.close_connection(&message.from, Some(ServerError::InvalidStream))
+                }
                 ClientInput::StreamEnded => self.close_connection(&message.from, None),
             }
         }
@@ -239,15 +282,17 @@ impl Application {
     }
 
     fn issue_ticket(&mut self, ticket: Ticket) {
-        let dispatcher_id_for_road: Option<Uuid> = self.connections.iter()
-        .filter(|(_id, connection)| -> bool {
-            if let Some(Client::Dispatcher(dispatcher)) = &connection.client {
-                return dispatcher.roads.contains(&ticket.road);
-            }
-            false
-        })
-        .map(|(id, _)| id.to_owned())
-        .next();
+        let dispatcher_id_for_road: Option<Uuid> = self
+            .connections
+            .iter()
+            .filter(|(_id, connection)| -> bool {
+                if let Some(Client::Dispatcher(dispatcher)) = &connection.client {
+                    return dispatcher.roads.contains(&ticket.road);
+                }
+                false
+            })
+            .map(|(id, _)| id.to_owned())
+            .next();
 
         if let Some(dispatcher_id) = dispatcher_id_for_road {
             if let Some(connection) = self.connections.get_mut(&dispatcher_id) {
@@ -299,7 +344,9 @@ impl Application {
             if buffer.len() >= drain {
                 let message = &buffer[0..drain];
                 let plate: PlateNumber = message[2..2 + plate_length].to_owned();
-                if let Ok(timestamp) = to_u32(&message[1 + 1 + plate_length..1 + 1 + plate_length + 4]) {
+                if let Ok(timestamp) =
+                    to_u32(&message[1 + 1 + plate_length..1 + 1 + plate_length + 4])
+                {
                     (Ok(Some(ClientInput::Plate(plate, timestamp))), drain)
                 } else {
                     (Err(()), 0)
@@ -333,7 +380,10 @@ impl Application {
             if let Ok(road) = to_u16(&message[1..3]) {
                 if let Ok(mile_marker) = to_u16(&message[3..5]) {
                     if let Ok(limit) = to_u16(&message[5..7]) {
-                        return (Ok(Some(ClientInput::IAmCamera(road, mile_marker, limit))), drain);
+                        return (
+                            Ok(Some(ClientInput::IAmCamera(road, mile_marker, limit))),
+                            drain,
+                        );
                     }
                 }
             }
@@ -384,13 +434,13 @@ fn handle_stream(id: Uuid, mut stream: TcpStream, transmitter: Sender<Message>) 
             Ok(0) => {
                 end_reason = ClientInput::StreamEnded;
                 break 'connected;
-            },
+            }
             Ok(n) => queue.extend_from_slice(&buffer[..n]),
             Err(ref err) if err.kind() == ErrorKind::WouldBlock => (),
             Err(_) => {
                 end_reason = ClientInput::StreamErrored;
                 break 'connected;
-            },
+            }
         };
 
         match Application::parse_input_buffer(&mut queue) {
@@ -399,13 +449,16 @@ fn handle_stream(id: Uuid, mut stream: TcpStream, transmitter: Sender<Message>) 
             Err(_) => {
                 end_reason = ClientInput::StreamErrored;
                 break 'connected;
-            },
+            }
         };
 
         thread::sleep(THREAD_SLOW_DOWN);
     }
 
-    _ = transmitter.send(Message { from: id, input: end_reason });
+    _ = transmitter.send(Message {
+        from: id,
+        input: end_reason,
+    });
 }
 
 async fn handle_heartbeat_interval(mut stream: TcpStream, interval: std::time::Duration) {
@@ -447,11 +500,12 @@ impl ServerOutput {
                     ServerError::AlreadyBeating => "Heartbeat Already Requested",
                     ServerError::NotACamera => "Not A Camera",
                     ServerError::InvalidStream => "Invalid Stream",
-                }.to_string();
+                }
+                .to_string();
                 response.push(MESSAGE_TYPE_ERROR);
                 response.push(error_string.len() as u8);
                 response.extend_from_slice(error_string.as_bytes());
-            },
+            }
             Self::Ticket(ticket) => {
                 response.push(MESSAGE_TYPE_TICKET);
                 response.push(ticket.plate.len() as u8);
@@ -462,7 +516,7 @@ impl ServerOutput {
                 response.extend_from_slice(&ticket.report2.mile_marker.to_be_bytes());
                 response.extend_from_slice(&ticket.report2.timestamp.to_be_bytes());
                 response.extend_from_slice(&ticket.speed.to_be_bytes());
-            },
+            }
             Self::Heartbeat => response.push(MESSAGE_TYPE_HEARTBEAT),
         };
         stream.write_all(&response).is_ok()
@@ -472,7 +526,7 @@ impl ServerOutput {
 fn to_u32(bytes: &[u8]) -> Result<u32, ()> {
     let bytes: [u8; 4] = match bytes.try_into() {
         Ok(bytes) => bytes,
-        Err(_) => return Err(())
+        Err(_) => return Err(()),
     };
     Ok(u32::from_be_bytes(bytes))
 }
@@ -480,7 +534,7 @@ fn to_u32(bytes: &[u8]) -> Result<u32, ()> {
 fn to_u16(bytes: &[u8]) -> Result<u16, ()> {
     let bytes: [u8; 2] = match bytes.try_into() {
         Ok(bytes) => bytes,
-        Err(_) => return Err(())
+        Err(_) => return Err(()),
     };
     Ok(u16::from_be_bytes(bytes))
 }

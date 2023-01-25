@@ -1,8 +1,8 @@
-use protozackers::{server, BUFFER_SIZE, THREAD_SLOW_DOWN};
-use regex::bytes::{Regex};
 use core::panic;
-use std::borrow::{Cow};
-use std::io::{Read, Write, ErrorKind};
+use protozackers::{server, BUFFER_SIZE, THREAD_SLOW_DOWN};
+use regex::bytes::Regex;
+use std::borrow::Cow;
+use std::io::{ErrorKind, Read, Write};
 use std::net::{Shutdown, TcpStream};
 use std::thread;
 
@@ -23,7 +23,7 @@ fn main() {
                 Err(_) => {
                     _ = victim.shutdown(Shutdown::Both);
                     continue;
-                },
+                }
             };
 
             let victim_writer = match victim.try_clone() {
@@ -66,10 +66,12 @@ fn handle_stream(mut upstream: TcpStream, mut downstream: TcpStream) {
 
 impl Spoofer {
     fn new() -> Self {
-        Self { re: match Regex::new(BOGUSCOIN_MATCHER) {
-            Ok(re) => re,
-            Err(_) => panic!("Invalid Regular Expression."),
-        } }
+        Self {
+            re: match Regex::new(BOGUSCOIN_MATCHER) {
+                Ok(re) => re,
+                Err(_) => panic!("Invalid Regular Expression."),
+            },
+        }
     }
 
     fn replace(&self, buffer: &[u8]) -> Vec<u8> {
@@ -85,7 +87,7 @@ impl Spoofer {
                         let mut result: Vec<u8> = Vec::new();
                         result.extend_from_slice(buffer);
                         result
-                    },
+                    }
                 })
                 .collect::<Vec<Vec<u8>>>()
                 .join(&b' ');

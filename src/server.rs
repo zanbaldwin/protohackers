@@ -11,7 +11,9 @@ pub fn get_tcp_listener(port: Option<u16>) -> TcpListener {
     };
     let address: SocketAddr = SocketAddr::from(([0, 0, 0, 0], port));
     let listener: TcpListener = TcpListener::bind(address).expect("Could not bind to port.");
-    listener.set_nonblocking(true).expect("Could not set TCP listener as non-blocking.");
+    listener
+        .set_nonblocking(true)
+        .expect("Could not set TCP listener as non-blocking.");
     println!("Listening for TCP connections on port {port}...");
     listener
 }
@@ -46,6 +48,10 @@ where
 
 pub fn get_port() -> u16 {
     let args: Vec<String> = env::args().collect();
-    let port: u16 = if args.len() >= 2 { args[1].parse::<u16>().expect("Invalid Port Number.") } else { DEFAULT_PORT };
+    let port: u16 = if args.len() >= 2 {
+        args[1].parse::<u16>().expect("Invalid Port Number.")
+    } else {
+        DEFAULT_PORT
+    };
     port
 }

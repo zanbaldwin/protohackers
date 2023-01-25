@@ -13,7 +13,9 @@ struct Database {
 }
 impl Database {
     fn new() -> Self {
-        Self { items: HashMap::new() }
+        Self {
+            items: HashMap::new(),
+        }
     }
     fn insert(&mut self, key: Vec<u8>, value: Vec<u8>) {
         if key.as_slice() == VERSION_KEY {
@@ -65,7 +67,7 @@ fn main() {
                     }
                     let _ = socket.send_to(&response, source);
                 }
-            },
+            }
             Err(_) => continue,
         };
         thread::sleep(THREAD_SLOW_DOWN);

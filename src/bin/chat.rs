@@ -2,11 +2,11 @@ extern crate uuid;
 
 use protozackers::{server, ASCII_NEWLINE, BUFFER_SIZE, THREAD_SLOW_DOWN};
 use std::collections::HashMap;
-use std::io::{Read, Write, ErrorKind};
+use std::io::{ErrorKind, Read, Write};
 use std::net::{Shutdown, TcpStream};
+use std::sync::mpsc::{self, Sender};
 use std::thread;
 use uuid::Uuid;
-use std::sync::mpsc::{self, Sender};
 
 const WELCOME_MESSAGE: &str = "Welcome to budgetchat! What shall I call you?\n";
 
@@ -31,7 +31,7 @@ impl Command {
                 let mut vec = string_to_vec(format!("[{name}] "));
                 vec.extend_from_slice(input);
                 vec
-            },
+            }
         };
         vec.push(b'\n');
         vec
@@ -45,7 +45,11 @@ struct Client {
 }
 impl Client {
     fn new(stream: TcpStream) -> Self {
-        Self { id: Uuid::new_v4(), stream, name: None }
+        Self {
+            id: Uuid::new_v4(),
+            stream,
+            name: None,
+        }
     }
     fn has_joined(&self) -> bool {
         self.name.is_some()
@@ -93,27 +97,35 @@ fn handle_command(command: Command, clients: &mut HashMap<Uuid, Client>) {
     let broadcast_message = command.get_broadcast();
     match command {
         Command::Join(id, name) => {
-            let existing_names: Vec<String> = clients.iter()
+            let existing_names: Vec<String> = clients
+                .iter()
                 .filter(|(client_id, client)| client_id != &&id && client.has_joined())
                 .map(|(_, client)| client.name.to_owned().unwrap())
                 .collect();
             if let Some(client) = clients.get_mut(&id) {
                 client.set_name(name);
-                let _ = client.stream.write_all(&string_to_vec(format!("* The room contains: {}\n", existing_names.join(", "))));
+                let _ = client.stream.write_all(&string_to_vec(format!(
+                    "* The room contains: {}\n",
+                    existing_names.join(", ")
+                )));
             }
             broadcast_to_joined_clients_except(clients, id, &broadcast_message);
-        },
+        }
         Command::Leave(id, _) => {
             clients.remove(&id);
             broadcast_to_joined_clients_except(clients, id, &broadcast_message);
-        },
+        }
         Command::Message(id, _, _) => {
             broadcast_to_joined_clients_except(clients, id, &broadcast_message);
-        },
+        }
     }
 }
 
-fn broadcast_to_joined_clients_except(clients: &mut HashMap<Uuid, Client>, except: Uuid, message: &[u8]) {
+fn broadcast_to_joined_clients_except(
+    clients: &mut HashMap<Uuid, Client>,
+    except: Uuid,
+    message: &[u8],
+) {
     for (client_id, client) in clients {
         if client_id != &except && client.has_joined() {
             let _ = client.stream.write_all(message);
@@ -141,22 +153,26 @@ fn handle_stream(id: Uuid, mut stream: TcpStream, transmitter: Sender<Command>) 
                     Ok(name) => {
                         display_name = Some(name.to_owned());
                         Command::Join(id.to_owned(), name)
-                    },
+                    }
                     Err(_) => break 'connected,
                 },
             };
 
-            transmitter.send(command).expect("Failed to send command to main thread.");
+            transmitter
+                .send(command)
+                .expect("Failed to send command to main thread.");
         }
 
         // Read input stream.
         match stream.read(&mut buffer) {
             Ok(0) => {
                 if let Some(name) = display_name {
-                    transmitter.send(Command::Leave(id.to_owned(), name)).expect("Failed to send command to main thread.");
+                    transmitter
+                        .send(Command::Leave(id.to_owned(), name))
+                        .expect("Failed to send command to main thread.");
                 }
                 break 'connected;
-            },
+            }
             Ok(n) => queue.extend_from_slice(&buffer[..n]),
             Err(ref err) if err.kind() == ErrorKind::WouldBlock => (),
             Err(_) => break 'connected,
