@@ -1,5 +1,5 @@
-48468427-c089-4887-a2f6-32e2c23fe341: 40 00 00 00 00
-c5bdbaa5-1e1d-4aa2-b324-a767fc82fd06: 40 00 00 00 0a
+c151b8af-828c-4ae5-bbab-7bc85b206c13: 40 00 00 00 00
+c28fb39e-e72c-4028-aa68-1e20fdc53054: 40 00 00 00 0a
 >>> 41
 >>> 41
 >>> 41
@@ -9,8 +9,8 @@ c5bdbaa5-1e1d-4aa2-b324-a767fc82fd06: 40 00 00 00 0a
 
 [0heartbeats.test] NOTE:check starts
 [0heartbeats.test] NOTE:checking whether heartbeats work
-[0heartbeats.test] NOTE:connected to 16.170.242.217 port 8096
-[0heartbeats.test] NOTE:connected to 16.170.242.217 port 8096
+[0heartbeats.test] NOTE:connected to 16.170.212.114 port 8096
+[0heartbeats.test] NOTE:connected to 16.170.212.114 port 8096
 [0heartbeats.test] NOTE:heartbeat 1
 [0heartbeats.test] NOTE:heartbeat 2
 [0heartbeats.test] NOTE:heartbeat 3
@@ -18,67 +18,183 @@ c5bdbaa5-1e1d-4aa2-b324-a767fc82fd06: 40 00 00 00 0a
 [0heartbeats.test] NOTE:heartbeat 5
 [0heartbeats.test] PASS
 
-3c44a548-6a6f-42bd-922d-e192394d1fb9: 80 1c 10 1d 3b 00 64
-7491aac5-d585-4aa3-b7b4-d34e7138a249: 80 1c 10 1d 45 00 64
-d361ec33-01a7-4e45-9d53-83ddc2aa372e: 81 01
-3c44a548-6a6f-42bd-922d-e192394d1fb9: 20 07 55 43 38 33 59 57 42 00 03 69 b6
-7491aac5-d585-4aa3-b7b4-d34e7138a249: 20 07 55 43 38 33 59 57 42 00 03 6a e2
-d361ec33-01a7-4e45-9d53-83ddc2aa372e: 1c 10
->>> 21 07 55 43 38 33 59 57 42 1c 10 1d 3b 00 03 69 b6 1d 45 00 03 6a e2 2e e0
+61d74e09-991d-4dd9-9585-f53d427f0ba0: 80 03 11 0c 9d 00 64
+b374f6a9-a7a2-4699-898c-ae3da7ed04d1: 80 03 11 0c a7 00 64
+eff37ab9-e8bc-4393-ae1e-3932d30880bd: 81 01
+61d74e09-991d-4dd9-9585-f53d427f0ba0: 20 07 56 48 30 30 4a 52 57 00 0a 61 0d
+b374f6a9-a7a2-4699-898c-ae3da7ed04d1: 20 07 56 48 30 30 4a 52 57 00 0a 62 39
+eff37ab9-e8bc-4393-ae1e-3932d30880bd: 03 11
+>>> 21 07 56 48 30 30 4a 52 57 03 11 0c 9d 00 0a 61 0d 0c a7 00 0a 62 39 2e e0
 
 [1car.test] NOTE:check starts
 [1car.test] NOTE:checking whether server handles a single car
-[1car.test] NOTE:connected to 16.170.242.217 port 8096
-[1car.test] NOTE:connected to 16.170.242.217 port 8096
-[1car.test] NOTE:connected to 16.170.242.217 port 8096
+[1car.test] NOTE:connected to 16.170.212.114 port 8096
+[1car.test] NOTE:connected to 16.170.212.114 port 8096
+[1car.test] NOTE:connected to 16.170.212.114 port 8096
 [1car.test] PASS
 
-fcdb5628-8d9c-4528-8ced-017441c782cb: 80 00 00
-c3ef5f04-a954-442d-b01f-a87a78f80675: 80 0e b5 01 e2 00 50
-3abe0fbf-4629-46bd-b484-1cd7d17cd658: 80 0e b5 01 ed 00 50
-714d616b-0d7e-41e1-8d0b-102b6cc017c8: 80 0e b5 01 f5 00 50
-a41cda05-d74f-45de-97a5-803666ed9577: 81 01 <incomplete>
-a41cda05-d74f-45de-97a5-803666ed9577: 0e b5
-3abe0fbf-4629-46bd-b484-1cd7d17cd658: 20 07 50 44 36 30 48 44 41 03 16 50 fe
-c3ef5f04-a954-442d-b01f-a87a78f80675: 20 07 50 44 36 30 48 44 41 03 16 4f cf
-714d616b-0d7e-41e1-8d0b-102b6cc017c8: 20 07 50 44 36 30 48 44 41 03 16 52 35
->>> 21 07 50 44 36 30 48 44 41 0e b5 01 ed 03 16 50 fe 01 e2 03 16 4f cf 32 c8
+72bf077b-1d25-4deb-87fc-536c4b70345c: 80 00 00
+c0b7fdb0-a266-47f2-a799-93d8930afa2e: 80 1a 47 0d 18 00 50
+e49c4dcf-0ddf-497b-9f0d-bb78eed82465: 80 1a 47 0d 23 00 50
+d77235d9-caa5-4b0b-9531-ca05282cb0fe: 80 1a 47 0d 2e 00 50
+ab3c2475-6b2e-4cac-862b-68e65b389c14: 81 01
+e49c4dcf-0ddf-497b-9f0d-bb78eed82465: 20 07 52 56 36 30 55 58 50 02 16 d0 8f
+ab3c2475-6b2e-4cac-862b-68e65b389c14: 1a 47
+c0b7fdb0-a266-47f2-a799-93d8930afa2e: 20 07 52 56 36 30 55 58 50 02 16 cf 61
+d77235d9-caa5-4b0b-9531-ca05282cb0fe: 20 07 52 56 36 30 55 58 50 02 16 d1 a9
+>>> 21 07 52 56 36 30 55 58 50 1a 47 0d 18 02 16 cf 61 0d 23 02 16 d0 8f 33 2c
 
 [2multitickets.test] NOTE:check starts
 [2multitickets.test] NOTE:checking whether server inhibits multiple tickets on same day
-[2multitickets.test] NOTE:connected to 16.170.242.217 port 8096
-[2multitickets.test] NOTE:connected to 16.170.242.217 port 8096
-[2multitickets.test] NOTE:connected to 16.170.242.217 port 8096
-[2multitickets.test] NOTE:connected to 16.170.242.217 port 8096
-[2multitickets.test] NOTE:connected to 16.170.242.217 port 8096
-[2multitickets.test] NOTE:received ticket for PD60HDA
+[2multitickets.test] NOTE:connected to 16.170.212.114 port 8096
+[2multitickets.test] NOTE:connected to 16.170.212.114 port 8096
+[2multitickets.test] NOTE:connected to 16.170.212.114 port 8096
+[2multitickets.test] NOTE:connected to 16.170.212.114 port 8096
+[2multitickets.test] NOTE:connected to 16.170.212.114 port 8096
+[2multitickets.test] NOTE:received ticket for RV60UXP
 [2multitickets.test] PASS
 
-(first-camera)  58612d63-14eb-4c8d-8ba1-33be86e77ca3: 80 ae a7 00 0a 00 3c                   "<IAmCamera{road: 44711, mile: 10,  limit: 60}>"
-(second-camera) a96fa1fe-eb49-4c95-931f-886f2b51c809: 80 ae a7 02 45 00 3c                   "<IAmCamera{road: 44711, mile: 581, limit: 60}>"
-(dispatcher)    60e82bb1-0edb-4a3b-b315-964802d80866: 81 01                                  incomplete
-(first-camera)  58612d63-14eb-4c8d-8ba1-33be86e77ca3: 20 04 35 54 5a 43 00 e8 46 0d          "<Plate{plate: '5TZC',    timestamp: 15222285}>"
-(second-camera) a96fa1fe-eb49-4c95-931f-886f2b51c809: 20 07 4c 57 36 39 45 4c 51 00 e9 07 b4 "<Plate{plate: 'LW69ELQ', timestamp: 15271860}>"
-(second-camera) a96fa1fe-eb49-4c95-931f-886f2b51c809: 20 07 57 58 37 30 59 52 4b 00 e8 fb ff "<Plate{plate: 'WX70YRK', timestamp: 15268863}>"
-                                                      20 04 35 54 5a 43 00 e8 9a 22          "<Plate{plate: '5TZC',    timestamp: 15243810}>"
-                                                      20 07 50 46 32 35 54 47 45 00 e8 a8 92 "<Plate{plate: 'PF25TGE', timestamp: 15247506}>"
-                                                      20 07 54 41 30 32 47 53 4d 00 e8 96 49 "<Plate{plate: 'TA02GSM', timestamp: 15242825}>"
-(dispatcher)    60e82bb1-0edb-4a3b-b315-964802d80866: ae a7                                  "<IAmDispatcher{roads: [44711]}>"
-(first-camera)  58612d63-14eb-4c8d-8ba1-33be86e77ca3: 20 07 4c 57 36 39 45 4c 51 00 e8 47 f0 "<Plate{plate: 'LW69ELQ', timestamp: 15222768}>"
-                                                      20 07 54 41 30 32 47 53 4d 00 e8 45 fd "<Plate{plate: 'TA02GSM', timestamp: 15222269}>"
-                                                      20 07 50 46 32 35 54 47 45 00 e8 46 4d "<Plate{plate: 'PF25TGE', timestamp: 15222349}>"
-                                                      20 07 57 58 37 30 59 52 4b 00 e8 47 bd "<Plate{plate: 'WX70YRK', timestamp: 15222717}>"
->>> 21 04 35 54 5a 43 ae a7 00 0a 00 e8 46 0d 02 45 00 e8 9a 22 25 1c                        "<Ticket{plate: '5TZC',    road: 44711, mile1: 10,  timestamp1: 15222285, mile2: 581, timestamp2: 15243810, speed: 9500}>"
->>> 21 07 54 41 30 32 47 53 4d ae a7 02 45 00 e8 96 49 00 0a 00 e8 45 fd 27 10               "<Ticket{plate: 'TA02GSM', road: 44711, mile1: 581, timestamp1: 15242825, mile2: 10,  timestamp2: 15222269, speed: 10000}>"
->>> 21 07 50 46 32 35 54 47 45 ae a7 02 45 00 e8 a8 92 00 0a 00 e8 46 4d 1f a4               "<Ticket{plate: 'PF25TGE', road: 44711, mile1: 581, timestamp1: 15247506, mile2: 10,  timestamp2: 15222349, speed: 8100}>"
+f3967a55-696f-46d5-b648-05f69b416a14: 80 a7 22 00 0a 00 3c
+c34fa758-94f8-48bc-89f7-0d80db179c7b: 80 a7 22 04 ca 00 3c
+c34fa758-94f8-48bc-89f7-0d80db179c7b: 20 07 4e 5a 37 38 51 59 55 00 f7 88 c4
+f3967a55-696f-46d5-b648-05f69b416a14: 20 07 50 50 34 37 41 44 4c 00 f7 88 11
+d48aa5fa-5d07-4d75-9a90-c81babd23f1c: 81 01
+d48aa5fa-5d07-4d75-9a90-c81babd23f1c: a7 22
+f3967a55-696f-46d5-b648-05f69b416a14: 20 07 4e 5a 37 38 51 59 55 00 f8 b8 8d 20 07 4e 58 32 31 4a 51 53 00 f7 87 ad 20 07 59 4e 31 31 50 52 43 00 f7 89 5f 20 07 47 55 30 38 51 45 54 00 f7 88 36
+c34fa758-94f8-48bc-89f7-0d80db179c7b: 20 07 47 55 30 38 51 45 54 00 f8 74 5e 20 07 4e 58 32 31 4a 51 53 00 f8 32 ad 20 07 50 50 34 37 41 44 4c 00 f8 62 bc
+>>> 21 07 47 55 30 38 51 45 54 a7 22 00 0a 00 f7 88 36 04 ca 00 f8 74 5e 1c 20
+>>> 21 07 4e 58 32 31 4a 51 53 a7 22 00 0a 00 f7 87 ad 04 ca 00 f8 32 ad 27 10
+>>> 21 07 50 50 34 37 41 44 4c a7 22 00 0a 00 f7 88 11 04 ca 00 f8 62 bc 1e 78
 
 [3multicars.test] NOTE:check starts
 [3multicars.test] NOTE:checking whether server handles multiple cars
-[3multicars.test] NOTE:connected to 16.170.242.217 port 8096
-[3multicars.test] NOTE:connected to 16.170.242.217 port 8096
-[3multicars.test] NOTE:connected to 16.170.242.217 port 8096
-[3multicars.test] NOTE:ticket for 5TZC on road 44711 at 95 mph
-[3multicars.test] NOTE:ticket for TA02GSM on road 44711 at 100 mph
-[3multicars.test] FAIL:
-                    server sent unexpected ticket for TA02GSM (road=44711, mm1=581, ts1=15242825, mm2=10, ts2=15222269, speed=100)
-                    expected this plate and road, maybe incorrect timestamps, mile markers, or speed?
+[3multicars.test] NOTE:connected to 16.170.212.114 port 8096
+[3multicars.test] NOTE:connected to 16.170.212.114 port 8096
+[3multicars.test] NOTE:connected to 16.170.212.114 port 8096
+[3multicars.test] NOTE:ticket for GU08QET on road 42786 at 72 mph
+[3multicars.test] NOTE:ticket for NX21JQS on road 42786 at 100 mph
+[3multicars.test] NOTE:ticket for PP47ADL on road 42786 at 78 mph
+[3multicars.test] PASS
+
+(camera-one)       9e8fab30-0aa8-4998-ba65-ecf7c7167eeb: 80 28 f1 00 0a 00 3c                   "<IAmCamera{}>"
+(camera-one)       9e8fab30-0aa8-4998-ba65-ecf7c7167eeb: 40 00 00 00 0a                         "<WantHeartbeat{deciseconds: 10}>"
+(camera-two)       a6a02a9b-5116-4761-b463-fccd3213c79e: 80 28 f1 02 c7 00 3c                   "<IAmCamera{}>"
+(camera-two)       a6a02a9b-5116-4761-b463-fccd3213c79e: 40 00 00 00 05                         "<WantHeartbeat{deciseconds: 5}>"
+(dispatcher-one)   c271376c-af2a-433c-8933-65b5f02e422a: 81 01                                  incomplete
+(dispatcher-one)   c271376c-af2a-433c-8933-65b5f02e422a: 28 f1                                  "<IAmDispatcher{roads:[]}>"
+(camera-three)     ee0fe7bc-9a83-4c11-b3a8-17e99ff48b80: 80 fb 3d 00 0a 00 3c                   "<IAmCamera{}>"
+(camera-three)     ee0fe7bc-9a83-4c11-b3a8-17e99ff48b80: 40 00 00 00 0a                         "<WantHeartbeat{deciseconds: 10}>"
+(camera-four)      fc49e6d5-92a8-47a2-968f-c425493c5d70: 80 fb 3d 03 e3 00 3c                   "<IAmCamera{}>"
+(camera-four)      fc49e6d5-92a8-47a2-968f-c425493c5d70: 40 00 00 00 0a                         "<WantHeartbeat{deciseconds: 10}>"
+(dispatcher-two)   51f94cdb-f156-4848-a74d-e3c70f24dd82: 81 01                                  incomplete
+(dispatcher-two)   51f94cdb-f156-4848-a74d-e3c70f24dd82: fb 3d                                  "<IAmDispatcher{roads:[]}>"
+(camera-five)      5732a74d-3919-4afd-a078-52894552678a: 80 f5 81 00 0a 00 3c                   "<IAmCamera{}>"
+(camera-five)      5732a74d-3919-4afd-a078-52894552678a: 40 00 00 00 0a                         "<WantHeartbeat{deciseconds: 10}>"
+(camera-six)       3720ff1a-1b45-428b-9c03-150c9fb556f1: 80 f5 81 04 12 00 3c                   "<IAmCamera{}>"
+(camera-six)       3720ff1a-1b45-428b-9c03-150c9fb556f1: 40 00 00 00 0f                         "<WantHeartbeat{deciseconds: 15}>"
+(dispatcher-three) 400a6e15-e8be-47d3-8ecb-b190fa5f4298: 81 01                                  incomplete
+(dispatcher-three) 400a6e15-e8be-47d3-8ecb-b190fa5f4298: f5 81                                  "<IAmDispatcher{roads:[]}>"
+(camera-seven)     96fa180d-b637-45a2-9391-9b0ad2d335d9: 80 6e 7a 00 0a 00 3c                   "<IAmCamera{}>"
+(camera-seven)     96fa180d-b637-45a2-9391-9b0ad2d335d9: 40 00 00 00 0a                         "<WantHeartbeat{deciseconds: 10}>"
+(camera-eight)     09828bbc-1391-4211-8bd4-ccb834aeb38f: 80 6e 7a 04 42 00 3c                   "<IAmCamera{}>"
+(camera-eight)     09828bbc-1391-4211-8bd4-ccb834aeb38f: 40 00 00 00 14                         "<WantHeartbeat{deciseconds: 20}>"
+(dispatcher-four)  7f528148-cf05-44f3-9674-402aef07b5d0: 81 01                                  incomplete
+(dispatcher-four)  7f528148-cf05-44f3-9674-402aef07b5d0: 6e 7a                                  "<IAmDispatcher{roads:[]}>"
+(camera-nine)      9c93a95c-ad35-4273-b335-b0724b25f5a1: 80 ca 6d 00 0a 00 3c                   "<IAmCamera{}>"
+(camera-nine)      9c93a95c-ad35-4273-b335-b0724b25f5a1: 40 00 00 00 0a                         "<WantHeartbeat{deciseconds: 10}>"
+(camera-ten)       9eba6a8e-5edc-49d2-921c-868d01710258: 80 ca 6d 04 4a 00 3c                   "<IAmCamera{}>"
+(camera-ten)       9eba6a8e-5edc-49d2-921c-868d01710258: 40 00 00 00 19                         "<WantHeartbeat{deciseconds: 25}>"
+(camera-eight)     09828bbc-1391-4211-8bd4-ccb834aeb38f: 20 07 57 51 39 30 4e 4c 58 03 a1 9b 8f "<Plate{plate: '', timestamp: }>"
+(camera-one)       9e8fab30-0aa8-4998-ba65-ecf7c7167eeb: 20 07 4d 54 30 33 4e 46 58 03 a0 69 5b "<Plate{plate: '', timestamp: }>"
+(camera-four)      fc49e6d5-92a8-47a2-968f-c425493c5d70: 20 07 45 58 30 34 47 50 46 03 a1 b4 57 "<Plate{plate: '', timestamp: }>"
+(camera-nine)      9c93a95c-ad35-4273-b335-b0724b25f5a1: 20 07 4c 48 37 35 4d 4d 4e 03 a0 69 cb "<Plate{plate: '', timestamp: }>"
+(camera-six)       3720ff1a-1b45-428b-9c03-150c9fb556f1: 20 07 58 54 32 32 59 4c 4b 03 a1 7e 6e "<Plate{plate: '', timestamp: }>"
+(camera-two)       a6a02a9b-5116-4761-b463-fccd3213c79e: 20 07 4d 54 30 33 4e 46 58 03 a0 cd 3e "<Plate{plate: '', timestamp: }>"
+(camera-three)     ee0fe7bc-9a83-4c11-b3a8-17e99ff48b80: 20 07 56 46 33 32 4d 4d 42 03 a1 0f cd "<Plate{plate: '', timestamp: }>"
+(camera-seven)     96fa180d-b637-45a2-9391-9b0ad2d335d9: 20 07 43 44 32 30 46 48 46 03 a0 69 71 "<Plate{plate: '', timestamp: }>"
+(camera-five)      5732a74d-3919-4afd-a078-52894552678a: 20 07 4e 42 33 38 51 43 50 03 a1 17 30 "<Plate{plate: '', timestamp: }>"
+(dispatcher-five)  fdfd02c2-a6f8-48c9-98c1-89446b9a5420: 81 01                                  incomplete
+(camera-ten)       9eba6a8e-5edc-49d2-921c-868d01710258: 20 07 48 48 33 38 53 59 51 03 a0 69 5f "<Plate{plate: '', timestamp: }>"
+                                                         20 07 4d 57 39 36 57 45 48 03 a1 af e0 "<Plate{plate: '', timestamp: }>"
+                                                         20 07 4b 57 30 38 4d 58 58 03 a0 69 82 "<Plate{plate: '', timestamp: }>"
+                                                         20 07 52 57 32 35 4d 4e 53 03 a0 69 57 "<Plate{plate: '', timestamp: }>"
+                                                         20 07 4c 48 37 35 4d 4d 4e 03 a1 34 69 "<Plate{plate: '', timestamp: }>"
+(camera-eight)     09828bbc-1391-4211-8bd4-ccb834aeb38f: 20 07 4c 44 33 33 44 4b 52 03 a1 29 25 "<Plate{plate: '', timestamp: }>"
+                                                         20 07 43 44 32 30 46 48 46 03 a1 0c 8d "<Plate{plate: '', timestamp: }>"
+                                                         20 07 55 4b 39 36 4c 42 45 03 a0 69 57 "<Plate{plate: '', timestamp: }>"
+                                                         20 07 4e 50 38 35 42 48 43 03 a0 69 6e "<Plate{plate: '', timestamp: }>"
+(dispatcher-five)  fdfd02c2-a6f8-48c9-98c1-89446b9a5420: ca 6d                                  "<IAmDispatcher{roads:[]}>"
+(camera-one)       9e8fab30-0aa8-4998-ba65-ecf7c7167eeb: 20 07 46 4d 36 30 55 43 42 03 a0 cd 21 "<Plate{plate: '', timestamp: }>"
+                                                         20 07 41 54 30 31 4b 4c 4d 03 a1 01 8e "<Plate{plate: '', timestamp: }>"
+                                                         20 07 44 58 36 30 46 58 55 03 a1 0d d1 "<Plate{plate: '', timestamp: }>"
+                                                         20 07 4b 42 36 30 53 4e 55 03 a0 cb eb "<Plate{plate: '', timestamp: }>"
+>>> 21 07 4d 54 30 33 4e 46 58 28 f1 00 0a 03 a0 69 5b 02 c7 03 a0 cd 3e 26 48
+(camera-four)      fc49e6d5-92a8-47a2-968f-c425493c5d70: 20 07 56 46 33 32 4d 4d 42 03 a0 69 9e "<Plate{plate: '', timestamp: }>"
+                                                         20 07 4d 58 38 32 47 47 56 03 a0 69 57 "<Plate{plate: '', timestamp: }>"
+                                                         20 07 45 57 35 33 59 46 43 03 a1 48 1b "<Plate{plate: '', timestamp: }>"
+                                                         20 07 41 42 33 35 46 58 44 03 a0 6b 34 "<Plate{plate: '', timestamp: }>"
+(camera-six)       3720ff1a-1b45-428b-9c03-150c9fb556f1: 20 07 4e 58 36 31 51 53 48 03 a1 6d a3 "<Plate{plate: '', timestamp: }>"
+                                                         20 07 51 50 39 34 4d 4e 45 03 a1 29 17 "<Plate{plate: '', timestamp: }>"
+                                                         20 07 4e 42 33 38 51 43 50 03 a0 69 9d "<Plate{plate: '', timestamp: }>"
+                                                         20 07 5a 48 32 30 51 4b 53 03 a0 fa 77 "<Plate{plate: '', timestamp: }>"
+(camera-seven)     96fa180d-b637-45a2-9391-9b0ad2d335d9: 20 07 4c 44 33 33 44 4b 52 03 a0 69 b4 "<Plate{plate: '', timestamp: }>"
+                                                         20 07 55 4b 39 36 4c 42 45 03 a1 01 37 "<Plate{plate: '', timestamp: }>"
+                                                         20 07 4e 50 38 35 42 48 43 03 a1 0b 4b "<Plate{plate: '', timestamp: }>"
+                                                         20 07 57 51 39 30 4e 4c 58 03 a0 6a c1 "<Plate{plate: '', timestamp: }>"
+(camera-five)      5732a74d-3919-4afd-a078-52894552678a: 20 07 5a 48 32 30 51 4b 53 03 a0 69 57 "<Plate{plate: '', timestamp: }>"
+                                                         20 07 4e 58 36 31 51 53 48 03 a0 6a 71 "<Plate{plate: '', timestamp: }>"
+                                                         20 07 58 54 32 32 59 4c 4b 03 a0 6a 9b "<Plate{plate: '', timestamp: }>"
+                                                         20 07 51 50 39 34 4d 4e 45 03 a0 69 c9 "<Plate{plate: '', timestamp: }>"
+(camera-nine)      9c93a95c-ad35-4273-b335-b0724b25f5a1: 20 07 48 48 33 38 53 59 51 03 a1 06 05 "<Plate{plate: '', timestamp: }>"
+                                                         20 07 4d 57 39 36 57 45 48 03 a0 6a eb "<Plate{plate: '', timestamp: }>"
+                                                         20 07 52 57 32 35 4d 4e 53 03 a1 02 57 "<Plate{plate: '', timestamp: }>"
+                                                         20 07 4b 57 30 38 4d 58 58 03 a1 15 2c "<Plate{plate: '', timestamp: }>"
+(camera-two)       a6a02a9b-5116-4761-b463-fccd3213c79e: 20 07 46 4d 36 30 55 43 42 03 a0 69 5b "<Plate{plate: '', timestamp: }>"
+                                                         20 07 44 58 36 30 46 58 55 03 a0 6a 44 "<Plate{plate: '', timestamp: }>"
+                                                         20 07 4b 42 36 30 53 4e 55 03 a0 69 57 "<Plate{plate: '', timestamp: }>"
+                                                         20 07 41 54 30 31 4b 4c 4d 03 a0 6a 18 "<Plate{plate: '', timestamp: }>"
+(camera-three)     ee0fe7bc-9a83-4c11-b3a8-17e99ff48b80: 20 07 45 58 30 34 47 50 46 03 a0 6b 46 "<Plate{plate: '', timestamp: }>"
+                                                         20 07 4d 58 38 32 47 47 56 03 a0 f3 db "<Plate{plate: '', timestamp: }>"
+                                                         20 07 41 42 33 35 46 58 44 03 a1 ad 8a "<Plate{plate: '', timestamp: }>"
+                                                         20 07 45 57 35 33 59 46 43 03 a0 6a 2f "<Plate{plate: '', timestamp: }>"
+>>> 41                                                                         "<Heartbeat{}>"
+>>> 21 07 43 44 32 30 46 48 46 6e 7a 00 0a 03 a0 69 71 04 42 03 a1 0c 8d 24 54 "<Ticket{}>"
+>>> 21 07 4c 48 37 35 4d 4d 4e ca 6d 00 0a 03 a0 69 cb 04 4a 03 a1 34 69 1d 4c "<Ticket{}>"
+>>> 21 07 56 46 33 32 4d 4d 42 fb 3d 03 e3 03 a0 69 9e 00 0a 03 a1 0f cd 20 6c "<Ticket{}>"
+>>> 21 07 4e 42 33 38 51 43 50 f5 81 04 12 03 a0 69 9d 00 0a 03 a1 17 30 20 6c "<Ticket{}>"
+>>> 21 07 4c 44 33 33 44 4b 52 6e 7a 00 0a 03 a0 69 b4 04 42 03 a1 29 25 1e dc "<Ticket{}>"
+>>> 21 07 55 4b 39 36 4c 42 45 6e 7a 04 42 03 a0 69 57 00 0a 03 a1 01 37 27 10 "<Ticket{}>"
+>>> 21 07 4e 50 38 35 42 48 43 6e 7a 04 42 03 a0 69 6e 00 0a 03 a1 0b 4b 24 54 "<Ticket{}>"
+>>> 21 07 5a 48 32 30 51 4b 53 f5 81 00 0a 03 a0 69 57 04 12 03 a0 fa 77 27 10 "<Ticket{}>"
+>>> 21 07 51 50 39 34 4d 4e 45 f5 81 00 0a 03 a0 69 c9 04 12 03 a1 29 17 1d 4c "<Ticket{}>"
+>>> 21 07 48 48 33 38 53 59 51 ca 6d 04 4a 03 a0 69 5f 00 0a 03 a1 06 05 25 e4 "<Ticket{}>"
+>>> 21 07 52 57 32 35 4d 4e 53 ca 6d 04 4a 03 a0 69 57 00 0a 03 a1 02 57 27 10 "<Ticket{}>"
+>>> 21 07 4b 57 30 38 4d 58 58 ca 6d 04 4a 03 a0 69 82 00 0a 03 a1 15 2c 22 c4 "<Ticket{}>"
+>>> 21 07 46 4d 36 30 55 43 42 28 f1 02 c7 03 a0 69 5b 00 0a 03 a0 cd 21 26 48 "<Ticket{}>"
+>>> 21 07 4b 42 36 30 53 4e 55 28 f1 02 c7 03 a0 69 57 00 0a 03 a0 cb eb 27 10 "<Ticket{}>"
+>>> 21 07 41 54 30 31 4b 4c 4d 28 f1 02 c7 03 a0 6a 18 00 0a 03 a1 01 8e 19 64 "<Ticket{}>"
+>>> 21 07 4d 58 38 32 47 47 56 fb 3d 03 e3 03 a0 69 57 00 0a 03 a0 f3 db 26 ac "<Ticket{}>"
+>>> 21 07 45 57 35 33 59 46 43 fb 3d 00 0a 03 a0 6a 2f 03 e3 03 a1 48 1b 18 38 "<Ticket{}>"
+>>> 41                                                                         "<Heartbeat{}>"
+>>> 41                                                                         "<Heartbeat{}>"
+>>> 41                                                                         "<Heartbeat{}>"
+
+[4multiroads.test] NOTE:check starts
+[4multiroads.test] NOTE:checking whether server handles multiple roads
+[4multiroads.test] NOTE:connected to 16.170.212.114 port 8096
+[4multiroads.test] NOTE:connected to 16.170.212.114 port 8096
+[4multiroads.test] NOTE:connected to 16.170.212.114 port 8096
+[4multiroads.test] NOTE:connected to 16.170.212.114 port 8096
+[4multiroads.test] NOTE:connected to 16.170.212.114 port 8096
+[4multiroads.test] NOTE:connected to 16.170.212.114 port 8096
+[4multiroads.test] NOTE:connected to 16.170.212.114 port 8096
+[4multiroads.test] NOTE:connected to 16.170.212.114 port 8096
+[4multiroads.test] NOTE:connected to 16.170.212.114 port 8096
+[4multiroads.test] NOTE:connected to 16.170.212.114 port 8096
+[4multiroads.test] NOTE:connected to 16.170.212.114 port 8096
+[4multiroads.test] NOTE:connected to 16.170.212.114 port 8096
+[4multiroads.test] NOTE:connected to 16.170.212.114 port 8096
+[4multiroads.test] NOTE:connected to 16.170.212.114 port 8096
+[4multiroads.test] NOTE:connected to 16.170.212.114 port 8096
+[4multiroads.test] NOTE:ticket for MT03NFX on road 10481 at 98 mph
+[4multiroads.test] FAIL:server sent unexpected ticket for MT03NFX (road=10481, mm1=10, ts1=60844379, mm2=711, ts2=60869950, speed=98): expected 1 similar ticket with different speed
