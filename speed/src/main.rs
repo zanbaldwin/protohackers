@@ -158,7 +158,7 @@ impl Application {
             if let Ok((stream, addr)) = listener.accept() {
                 let connection = Connection::new(stream);
 
-                eprintln!("Accepting new connection {} from {addr}...", connection.id);
+                println!("Accepting new connection {} from {addr}...", connection.id);
 
                 let thread_id: Uuid = connection.id;
                 let thread_transmitter = conn_tx.clone();
@@ -184,7 +184,7 @@ impl Application {
 
     fn handle_message(&mut self, message: Message) {
         if let Some(connection) = self.connections.get_mut(&message.from) {
-            eprintln!("{}: {:?}", connection.id, message.input);
+            println!("{}: {:?}", connection.id, message.input);
             match message.input {
                 ClientInput::Plate(plate_number, timestamp) => match &connection.client {
                     Some(Client::Camera(camera)) => {
@@ -219,7 +219,7 @@ impl Application {
                             }
                         };
                         let interval = Duration::from_millis((deciseconds as u64) * 100);
-                        eprintln!(
+                        println!(
                             "Pinging {} every {interval:?}.",
                             heartbeat_stream.peer_addr().unwrap()
                         );
@@ -309,10 +309,10 @@ impl Application {
     fn close_connection(&mut self, id: &Uuid, error: Option<ServerError>) {
         if let Some(connection) = self.connections.get_mut(id) {
             if let Some(error) = error {
-                eprintln!("ERROR ({}): {error:?}", connection.id);
+                println!("ERROR ({}): {error:?}", connection.id);
                 ServerOutput::Error(error).write(&mut connection.stream);
             } else {
-                eprintln!("DROP: {}", connection.id);
+                println!("Dropping connection {}...", connection.id);
             }
             _ = connection.stream.shutdown(Shutdown::Both);
             self.connections.remove(id);
@@ -434,7 +434,10 @@ fn handle_stream(id: Uuid, mut stream: TcpStream, transmitter: Sender<Message>) 
                 end_reason = ClientInput::StreamEnded;
                 break 'connected;
             }
-            Ok(n) => queue.extend_from_slice(&buffer[..n]),
+            Ok(n) => {
+                queue.extend_from_slice(&buffer[..n]);
+                eprintln!("{id}:{}", u8s_to_hex_str(&buffer[..n]));
+            }
             Err(ref err) if err.kind() == ErrorKind::WouldBlock => (),
             Err(_) => {
                 end_reason = ClientInput::StreamErrored;
@@ -533,4 +536,8 @@ fn to_u16(bytes: &[u8]) -> Result<u16, ()> {
         Err(_) => return Err(()),
     };
     Ok(u16::from_be_bytes(bytes))
+}
+
+fn u8s_to_hex_str(bytes: &[u8]) -> String {
+    bytes.iter().map(|byte| format!(" {byte:02x}")).collect()
 }
