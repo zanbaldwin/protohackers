@@ -1,0 +1,84 @@
+48468427-c089-4887-a2f6-32e2c23fe341: 40 00 00 00 00
+c5bdbaa5-1e1d-4aa2-b324-a767fc82fd06: 40 00 00 00 0a
+>>> 41
+>>> 41
+>>> 41
+>>> 41
+>>> 41
+>>> 41
+
+[0heartbeats.test] NOTE:check starts
+[0heartbeats.test] NOTE:checking whether heartbeats work
+[0heartbeats.test] NOTE:connected to 16.170.242.217 port 8096
+[0heartbeats.test] NOTE:connected to 16.170.242.217 port 8096
+[0heartbeats.test] NOTE:heartbeat 1
+[0heartbeats.test] NOTE:heartbeat 2
+[0heartbeats.test] NOTE:heartbeat 3
+[0heartbeats.test] NOTE:heartbeat 4
+[0heartbeats.test] NOTE:heartbeat 5
+[0heartbeats.test] PASS
+
+3c44a548-6a6f-42bd-922d-e192394d1fb9: 80 1c 10 1d 3b 00 64
+7491aac5-d585-4aa3-b7b4-d34e7138a249: 80 1c 10 1d 45 00 64
+d361ec33-01a7-4e45-9d53-83ddc2aa372e: 81 01
+3c44a548-6a6f-42bd-922d-e192394d1fb9: 20 07 55 43 38 33 59 57 42 00 03 69 b6
+7491aac5-d585-4aa3-b7b4-d34e7138a249: 20 07 55 43 38 33 59 57 42 00 03 6a e2
+d361ec33-01a7-4e45-9d53-83ddc2aa372e: 1c 10
+>>> 21 07 55 43 38 33 59 57 42 1c 10 1d 3b 00 03 69 b6 1d 45 00 03 6a e2 2e e0
+
+[1car.test] NOTE:check starts
+[1car.test] NOTE:checking whether server handles a single car
+[1car.test] NOTE:connected to 16.170.242.217 port 8096
+[1car.test] NOTE:connected to 16.170.242.217 port 8096
+[1car.test] NOTE:connected to 16.170.242.217 port 8096
+[1car.test] PASS
+
+fcdb5628-8d9c-4528-8ced-017441c782cb: 80 00 00
+c3ef5f04-a954-442d-b01f-a87a78f80675: 80 0e b5 01 e2 00 50
+3abe0fbf-4629-46bd-b484-1cd7d17cd658: 80 0e b5 01 ed 00 50
+714d616b-0d7e-41e1-8d0b-102b6cc017c8: 80 0e b5 01 f5 00 50
+a41cda05-d74f-45de-97a5-803666ed9577: 81 01 <incomplete>
+a41cda05-d74f-45de-97a5-803666ed9577: 0e b5
+3abe0fbf-4629-46bd-b484-1cd7d17cd658: 20 07 50 44 36 30 48 44 41 03 16 50 fe
+c3ef5f04-a954-442d-b01f-a87a78f80675: 20 07 50 44 36 30 48 44 41 03 16 4f cf
+714d616b-0d7e-41e1-8d0b-102b6cc017c8: 20 07 50 44 36 30 48 44 41 03 16 52 35
+>>> 21 07 50 44 36 30 48 44 41 0e b5 01 ed 03 16 50 fe 01 e2 03 16 4f cf 32 c8
+
+[2multitickets.test] NOTE:check starts
+[2multitickets.test] NOTE:checking whether server inhibits multiple tickets on same day
+[2multitickets.test] NOTE:connected to 16.170.242.217 port 8096
+[2multitickets.test] NOTE:connected to 16.170.242.217 port 8096
+[2multitickets.test] NOTE:connected to 16.170.242.217 port 8096
+[2multitickets.test] NOTE:connected to 16.170.242.217 port 8096
+[2multitickets.test] NOTE:connected to 16.170.242.217 port 8096
+[2multitickets.test] NOTE:received ticket for PD60HDA
+[2multitickets.test] PASS
+
+(first-camera)  58612d63-14eb-4c8d-8ba1-33be86e77ca3: 80 ae a7 00 0a 00 3c                   "<IAmCamera{road: 44711, mile: 10,  limit: 60}>"
+(second-camera) a96fa1fe-eb49-4c95-931f-886f2b51c809: 80 ae a7 02 45 00 3c                   "<IAmCamera{road: 44711, mile: 581, limit: 60}>"
+(dispatcher)    60e82bb1-0edb-4a3b-b315-964802d80866: 81 01                                  incomplete
+(first-camera)  58612d63-14eb-4c8d-8ba1-33be86e77ca3: 20 04 35 54 5a 43 00 e8 46 0d          "<Plate{plate: '5TZC',    timestamp: 15222285}>"
+(second-camera) a96fa1fe-eb49-4c95-931f-886f2b51c809: 20 07 4c 57 36 39 45 4c 51 00 e9 07 b4 "<Plate{plate: 'LW69ELQ', timestamp: 15271860}>"
+(second-camera) a96fa1fe-eb49-4c95-931f-886f2b51c809: 20 07 57 58 37 30 59 52 4b 00 e8 fb ff "<Plate{plate: 'WX70YRK', timestamp: 15268863}>"
+                                                      20 04 35 54 5a 43 00 e8 9a 22          "<Plate{plate: '5TZC',    timestamp: 15243810}>"
+                                                      20 07 50 46 32 35 54 47 45 00 e8 a8 92 "<Plate{plate: 'PF25TGE', timestamp: 15247506}>"
+                                                      20 07 54 41 30 32 47 53 4d 00 e8 96 49 "<Plate{plate: 'TA02GSM', timestamp: 15242825}>"
+(dispatcher)    60e82bb1-0edb-4a3b-b315-964802d80866: ae a7                                  "<IAmDispatcher{roads: [44711]}>"
+(first-camera)  58612d63-14eb-4c8d-8ba1-33be86e77ca3: 20 07 4c 57 36 39 45 4c 51 00 e8 47 f0 "<Plate{plate: 'LW69ELQ', timestamp: 15222768}>"
+                                                      20 07 54 41 30 32 47 53 4d 00 e8 45 fd "<Plate{plate: 'TA02GSM', timestamp: 15222269}>"
+                                                      20 07 50 46 32 35 54 47 45 00 e8 46 4d "<Plate{plate: 'PF25TGE', timestamp: 15222349}>"
+                                                      20 07 57 58 37 30 59 52 4b 00 e8 47 bd "<Plate{plate: 'WX70YRK', timestamp: 15222717}>"
+>>> 21 04 35 54 5a 43 ae a7 00 0a 00 e8 46 0d 02 45 00 e8 9a 22 25 1c                        "<Ticket{plate: '5TZC',    road: 44711, mile1: 10,  timestamp1: 15222285, mile2: 581, timestamp2: 15243810, speed: 9500}>"
+>>> 21 07 54 41 30 32 47 53 4d ae a7 02 45 00 e8 96 49 00 0a 00 e8 45 fd 27 10               "<Ticket{plate: 'TA02GSM', road: 44711, mile1: 581, timestamp1: 15242825, mile2: 10,  timestamp2: 15222269, speed: 10000}>"
+>>> 21 07 50 46 32 35 54 47 45 ae a7 02 45 00 e8 a8 92 00 0a 00 e8 46 4d 1f a4               "<Ticket{plate: 'PF25TGE', road: 44711, mile1: 581, timestamp1: 15247506, mile2: 10,  timestamp2: 15222349, speed: 8100}>"
+
+[3multicars.test] NOTE:check starts
+[3multicars.test] NOTE:checking whether server handles multiple cars
+[3multicars.test] NOTE:connected to 16.170.242.217 port 8096
+[3multicars.test] NOTE:connected to 16.170.242.217 port 8096
+[3multicars.test] NOTE:connected to 16.170.242.217 port 8096
+[3multicars.test] NOTE:ticket for 5TZC on road 44711 at 95 mph
+[3multicars.test] NOTE:ticket for TA02GSM on road 44711 at 100 mph
+[3multicars.test] FAIL:
+                    server sent unexpected ticket for TA02GSM (road=44711, mm1=581, ts1=15242825, mm2=10, ts2=15222269, speed=100)
+                    expected this plate and road, maybe incorrect timestamps, mile markers, or speed?
