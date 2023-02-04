@@ -1,5 +1,5 @@
+use common::{get_tcp_listener, BUFFER_SIZE, THREAD_SLOW_DOWN};
 use core::panic;
-use protozackers::{server, BUFFER_SIZE, THREAD_SLOW_DOWN};
 use regex::bytes::Regex;
 use std::borrow::Cow;
 use std::io::{ErrorKind, Read, Write};
@@ -15,7 +15,7 @@ struct Spoofer {
 }
 
 fn main() {
-    let listener = server::get_tcp_listener(None);
+    let listener = get_tcp_listener(None);
     loop {
         if let Ok((victim, _)) = listener.accept() {
             let upstream: TcpStream = match TcpStream::connect(UPSTREAM_SERVER) {

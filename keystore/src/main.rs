@@ -1,10 +1,10 @@
-use protozackers::{server, BUFFER_SIZE};
+use common::{run, BUFFER_SIZE};
 use std::io::{ErrorKind, Read, Write};
 use std::net::{Shutdown, TcpStream};
 use std::vec::Drain;
 
 fn main() {
-    server::run(handle_stream, None, false);
+    run(handle_stream, None, false);
 }
 
 struct AssetPrice {

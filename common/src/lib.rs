@@ -1,8 +1,13 @@
-use crate::{DEFAULT_PORT, THREAD_SLOW_DOWN};
-
 use std::env;
 use std::net::{SocketAddr, TcpListener, TcpStream, UdpSocket};
 use std::thread;
+use std::time::Duration;
+
+pub const ASCII_NEWLINE: u8 = 10;
+pub const BUFFER_SIZE: usize = 1_024;
+pub const DEFAULT_PORT: u16 = 8_096;
+// Don't hog an entire CPU core at 100% in the infinite loop. Chill out for a little bit each iteration.
+pub const THREAD_SLOW_DOWN: Duration = Duration::from_millis(5);
 
 pub fn get_tcp_listener(port: Option<u16>) -> TcpListener {
     let port = match port {

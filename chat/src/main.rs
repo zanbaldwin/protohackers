@@ -1,6 +1,6 @@
 extern crate uuid;
 
-use protozackers::{server, ASCII_NEWLINE, BUFFER_SIZE, THREAD_SLOW_DOWN};
+use common::{get_tcp_listener, ASCII_NEWLINE, BUFFER_SIZE, THREAD_SLOW_DOWN};
 use std::collections::HashMap;
 use std::io::{ErrorKind, Read, Write};
 use std::net::{Shutdown, TcpStream};
@@ -60,7 +60,7 @@ impl Client {
 }
 
 fn main() {
-    let listener = server::get_tcp_listener(None);
+    let listener = get_tcp_listener(None);
     let mut clients: HashMap<Uuid, Client> = HashMap::new();
     let (transmitter, receiver) = mpsc::channel::<Command>();
 

@@ -1,4 +1,4 @@
-use protozackers::{server, THREAD_SLOW_DOWN};
+use common::{get_udp_listener, THREAD_SLOW_DOWN};
 use std::collections::HashMap;
 use std::thread;
 
@@ -35,7 +35,7 @@ impl Database {
 }
 
 fn main() {
-    let socket = server::get_udp_listener(None);
+    let socket = get_udp_listener(None);
     let mut database = Database::new();
 
     let mut buffer = [0u8; BUFFER_SIZE];
@@ -65,7 +65,7 @@ fn main() {
                     if SHOULD_HANDLE_NEWLINES {
                         response.push(b'\n');
                     }
-                    let _ = socket.send_to(&response, source);
+                    _ = socket.send_to(&response, source);
                 }
             }
             Err(_) => continue,

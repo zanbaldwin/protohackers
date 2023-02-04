@@ -1,6 +1,6 @@
 extern crate uuid;
 
-use protozackers::{server, BUFFER_SIZE, THREAD_SLOW_DOWN};
+use common::{get_tcp_listener, BUFFER_SIZE, THREAD_SLOW_DOWN};
 use std::cmp::{max, min};
 use std::collections::HashMap;
 use std::io::{ErrorKind, Read, Write};
@@ -321,7 +321,7 @@ impl Application {
     }
 
     fn parse_input_buffer(buffer: &mut Vec<u8>) -> Result<Option<ClientInput>, ()> {
-        let (result, drain) = match buffer.get(0) {
+        let (result, drain) = match buffer.first() {
             Some(&MESSAGE_TYPE_PLATE) => Self::process_buffer_plate(buffer),
             Some(&MESSAGE_TYPE_WANT_HEARTBEAT) => Self::process_buffer_heartbeat(buffer),
             Some(&MESSAGE_TYPE_AM_CAMERA) => Self::process_buffer_camera(buffer),
@@ -419,7 +419,7 @@ impl Application {
 }
 
 fn main() {
-    let listener = server::get_tcp_listener(None);
+    let listener = get_tcp_listener(None);
     let mut app = Application::new();
     app.run(listener);
 }

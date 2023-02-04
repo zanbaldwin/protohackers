@@ -1,13 +1,13 @@
 extern crate primes;
 extern crate serde_json;
 
-use protozackers::{server, ASCII_NEWLINE, BUFFER_SIZE};
+use common::{run, ASCII_NEWLINE, BUFFER_SIZE};
 use serde::{Deserialize, Serialize};
 use std::io::{ErrorKind, Read, Write};
 use std::net::{Shutdown, TcpStream};
 
 fn main() {
-    server::run(handle_stream, None, false);
+    run(handle_stream, None, false);
 }
 
 const MALFORMED_RESPONSE: [u8; 5] = [69, 82, 82, 79, 82]; // "ERROR"
@@ -43,7 +43,7 @@ pub fn handle_stream(mut stream: TcpStream) {
             let response: Vec<u8> = match process_json(&line) {
                 Ok(response) => response,
                 Err(response) => {
-                    let _ = stream.write_all(response);
+                    _ = stream.write_all(response);
                     break 'connected;
                 }
             };
@@ -52,7 +52,7 @@ pub fn handle_stream(mut stream: TcpStream) {
         }
     }
 
-    let _ = stream.shutdown(Shutdown::Both);
+    _ = stream.shutdown(Shutdown::Both);
 }
 
 fn process_json(json: &[u8]) -> Result<Vec<u8>, &[u8; 5]> {
