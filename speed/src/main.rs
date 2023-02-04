@@ -1,11 +1,13 @@
 extern crate uuid;
+mod threads;
+mod utils;
 
-use common::{get_tcp_listener, BUFFER_SIZE, THREAD_SLOW_DOWN};
+use common::{get_tcp_listener, THREAD_SLOW_DOWN};
 use std::cmp::{max, min};
 use std::collections::HashMap;
-use std::io::{ErrorKind, Read, Write};
+use std::io::Write;
 use std::net::{Shutdown, TcpListener, TcpStream};
-use std::sync::mpsc::{self, Sender};
+use std::sync::mpsc::{self};
 use std::thread;
 use std::time::Duration;
 use uuid::Uuid;
@@ -186,7 +188,9 @@ impl Application {
                 };
 
                 self.connections.insert(connection.id, connection);
-                thread::spawn(move || handle_stream(thread_id, thread_stream, thread_transmitter));
+                thread::spawn(move || {
+                    threads::handle_stream(thread_id, thread_stream, thread_transmitter)
+                });
             }
 
             if let Ok(message) = conn_rx.try_recv() {
@@ -254,7 +258,7 @@ impl Application {
                             heartbeat_stream.peer_addr().unwrap()
                         );
                         thread::spawn(move || {
-                            handle_heartbeat_interval(heartbeat_stream, interval)
+                            threads::handle_heartbeat_interval(heartbeat_stream, interval)
                         });
                     }
                 }
@@ -374,7 +378,7 @@ impl Application {
                 let message = &buffer[0..drain];
                 let plate: PlateNumber = message[2..2 + plate_length].to_owned();
                 if let Ok(timestamp) =
-                    to_u32(&message[1 + 1 + plate_length..1 + 1 + plate_length + 4])
+                    utils::to_u32(&message[1 + 1 + plate_length..1 + 1 + plate_length + 4])
                 {
                     (Ok(Some(ClientInput::Plate(plate, timestamp))), drain)
                 } else {
@@ -392,7 +396,7 @@ impl Application {
         let drain = 5;
         if buffer.len() >= drain {
             let message = &buffer[..drain];
-            if let Ok(deciseconds) = to_u32(&message[1..5]) {
+            if let Ok(deciseconds) = utils::to_u32(&message[1..5]) {
                 (Ok(Some(ClientInput::WantHeartbeat(deciseconds))), drain)
             } else {
                 (Err(()), 0)
@@ -406,9 +410,9 @@ impl Application {
         let drain: usize = 7;
         if buffer.len() >= drain {
             let message = &buffer[..drain];
-            if let Ok(road) = to_u16(&message[1..3]) {
-                if let Ok(mile_marker) = to_u16(&message[3..5]) {
-                    if let Ok(limit) = to_u16(&message[5..7]) {
+            if let Ok(road) = utils::to_u16(&message[1..3]) {
+                if let Ok(mile_marker) = utils::to_u16(&message[3..5]) {
+                    if let Ok(limit) = utils::to_u16(&message[5..7]) {
                         return (
                             Ok(Some(ClientInput::IAmCamera(road, mile_marker, limit))),
                             drain,
@@ -431,7 +435,7 @@ impl Application {
                 let mut roads: Vec<RoadId> = Vec::new();
                 for i in 0..road_count {
                     let position = 1 + 1 + (2 * i);
-                    if let Ok(road) = to_u16(&message[position..position + 2]) {
+                    if let Ok(road) = utils::to_u16(&message[position..position + 2]) {
                         roads.push(road);
                     } else {
                         return (Err(()), 0);
@@ -451,58 +455,6 @@ fn main() {
     let listener = get_tcp_listener(None);
     let mut app = Application::new();
     app.run(listener);
-}
-
-fn handle_stream(id: Uuid, mut stream: TcpStream, transmitter: Sender<Message>) {
-    let mut buffer = [0u8; BUFFER_SIZE];
-    let mut queue: Vec<u8> = Vec::new();
-
-    let end_reason: ClientInput;
-    'connected: loop {
-        match stream.read(&mut buffer) {
-            Ok(0) => {
-                end_reason = ClientInput::StreamEnded;
-                break 'connected;
-            }
-            Ok(n) => {
-                queue.extend_from_slice(&buffer[..n]);
-                eprintln!("{id}:{}", u8s_to_hex_str(&buffer[..n]));
-            }
-            Err(ref err) if err.kind() == ErrorKind::WouldBlock => (),
-            Err(_) => {
-                end_reason = ClientInput::StreamErrored;
-                break 'connected;
-            }
-        };
-
-        'parse: loop {
-            match Application::parse_input_buffer(&mut queue) {
-                Ok(None) => break 'parse,
-                Ok(Some(input)) => _ = transmitter.send(Message { from: id, input }),
-                Err(_) => {
-                    end_reason = ClientInput::StreamErrored;
-                    break 'connected;
-                }
-            };
-        }
-
-        thread::sleep(THREAD_SLOW_DOWN);
-    }
-
-    _ = transmitter.send(Message {
-        from: id,
-        input: end_reason,
-    });
-}
-
-fn handle_heartbeat_interval(mut stream: TcpStream, interval: std::time::Duration) {
-    'heartbeat: loop {
-        thread::sleep(interval);
-        if !ServerOutput::Heartbeat.write(&mut stream) {
-            _ = stream.shutdown(Shutdown::Both);
-            break 'heartbeat;
-        }
-    }
 }
 
 #[derive(Debug)]
@@ -550,27 +502,7 @@ impl ServerOutput {
             }
             Self::Heartbeat => response.push(MESSAGE_TYPE_HEARTBEAT),
         };
-        eprintln!(">>>{}", u8s_to_hex_str(&response));
+        eprintln!(">>> {}", utils::u8s_to_hex_str(&response));
         stream.write_all(&response).is_ok()
     }
-}
-
-fn to_u32(bytes: &[u8]) -> Result<u32, ()> {
-    let bytes: [u8; 4] = match bytes.try_into() {
-        Ok(bytes) => bytes,
-        Err(_) => return Err(()),
-    };
-    Ok(u32::from_be_bytes(bytes))
-}
-
-fn to_u16(bytes: &[u8]) -> Result<u16, ()> {
-    let bytes: [u8; 2] = match bytes.try_into() {
-        Ok(bytes) => bytes,
-        Err(_) => return Err(()),
-    };
-    Ok(u16::from_be_bytes(bytes))
-}
-
-fn u8s_to_hex_str(bytes: &[u8]) -> String {
-    bytes.iter().map(|byte| format!(" {byte:02x}")).collect()
 }
