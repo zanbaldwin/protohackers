@@ -45,11 +45,11 @@ enum Client {
     Dispatcher(Dispatcher),
 }
 
-#[derive(Clone)]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord)]
 struct Report {
     plate: PlateNumber,
-    timestamp: Timestamp,
     road: RoadId,
+    timestamp: Timestamp,
     mile_marker: MileMarker,
     limit: SpeedLimit,
 }
@@ -85,6 +85,7 @@ impl Report {
         }
     }
 }
+
 #[derive(Clone)]
 struct Ticket {
     plate: PlateNumber,
@@ -101,8 +102,8 @@ impl Ticket {
         Self {
             plate,
             road,
-            report1: previous,
-            report2: current,
+            report1: min(previous.clone(), current.clone()),
+            report2: max(previous, current),
             speed,
         }
     }
