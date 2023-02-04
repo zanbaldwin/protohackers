@@ -8,7 +8,6 @@ use std::net::{Shutdown, TcpListener, TcpStream};
 use std::sync::mpsc::{self, Sender};
 use std::thread;
 use std::time::Duration;
-use tokio::time::Interval;
 use uuid::Uuid;
 
 const SPEED_ERROR_MARGIN: f32 = 0.4;
@@ -461,15 +460,12 @@ fn handle_stream(id: Uuid, mut stream: TcpStream, transmitter: Sender<Message>) 
     });
 }
 
-async fn handle_heartbeat_interval(mut stream: TcpStream, interval: std::time::Duration) {
-    let mut wait: Interval = tokio::time::interval(interval);
-    // Skip initial tick at 0s.
-    wait.tick().await;
-    loop {
-        wait.tick().await;
+fn handle_heartbeat_interval(mut stream: TcpStream, interval: std::time::Duration) {
+    'heartbeat: loop {
+        thread::sleep(interval);
         if !ServerOutput::Heartbeat.write(&mut stream) {
             _ = stream.shutdown(Shutdown::Both);
-            return;
+            break 'heartbeat;
         }
     }
 }
