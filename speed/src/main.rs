@@ -11,6 +11,7 @@ use std::time::Duration;
 use uuid::Uuid;
 
 const SPEED_ERROR_MARGIN: f32 = 0.4;
+const DAY_IN_SECONDS: u32 = 86_400;
 
 const MESSAGE_TYPE_ERROR: u8 = 0x10;
 const MESSAGE_TYPE_PLATE: u8 = 0x20;
@@ -29,6 +30,7 @@ type Timestamp = u32;
 type PlateNumber = Vec<u8>;
 type HeartbeatInterval = u32;
 type BufferMatch = (Result<Option<ClientInput>, ()>, usize);
+type IssuedTickets = HashMap<Vec<u8>, Vec<u32>>;
 
 struct Camera {
     road: RoadId,
@@ -104,6 +106,16 @@ impl Ticket {
             speed,
         }
     }
+
+    fn get_days_applicable_to(&self) -> Vec<u32> {
+        let day1 = self.report1.timestamp / DAY_IN_SECONDS;
+        let day2 = self.report2.timestamp / DAY_IN_SECONDS;
+        if day1 == day2 {
+            vec![day1]
+        } else {
+            vec![day1, day2]
+        }
+    }
 }
 
 #[derive(Debug)]
@@ -141,6 +153,7 @@ struct Application {
     connections: HashMap<Uuid, Connection>,
     pending_tickets: HashMap<RoadId, Vec<Ticket>>,
     reports: HashMap<PlateNumber, Report>,
+    days_issued: IssuedTickets,
 }
 impl Application {
     fn new() -> Self {
@@ -148,6 +161,7 @@ impl Application {
             connections: HashMap::new(),
             pending_tickets: HashMap::new(),
             reports: HashMap::new(),
+            days_issued: HashMap::new(),
         }
     }
 
@@ -196,7 +210,22 @@ impl Application {
                             camera.limit,
                         );
                         if let Some(ticket) = self.process_report(report) {
-                            self.issue_ticket(ticket);
+                            let mut can_issue: bool = true;
+
+                            let already_issued_days = self
+                                .days_issued
+                                .entry(ticket.plate.clone())
+                                .or_insert(vec![]);
+                            for applicable_day in ticket.get_days_applicable_to() {
+                                if already_issued_days.contains(&applicable_day) {
+                                    can_issue = false;
+                                }
+                                already_issued_days.push(applicable_day);
+                            }
+
+                            if can_issue {
+                                self.issue_ticket(ticket);
+                            }
                         }
                     }
                     Some(_) => self.close_connection(&message.from, Some(ServerError::NotACamera)),
@@ -518,6 +547,7 @@ impl ServerOutput {
             }
             Self::Heartbeat => response.push(MESSAGE_TYPE_HEARTBEAT),
         };
+        eprintln!(">>>{}", u8s_to_hex_str(&response));
         stream.write_all(&response).is_ok()
     }
 }
