@@ -474,14 +474,16 @@ fn handle_stream(id: Uuid, mut stream: TcpStream, transmitter: Sender<Message>) 
             }
         };
 
-        match Application::parse_input_buffer(&mut queue) {
-            Ok(None) => (),
-            Ok(Some(input)) => _ = transmitter.send(Message { from: id, input }),
-            Err(_) => {
-                end_reason = ClientInput::StreamErrored;
-                break 'connected;
-            }
-        };
+        'parse: loop {
+            match Application::parse_input_buffer(&mut queue) {
+                Ok(None) => break 'parse,
+                Ok(Some(input)) => _ = transmitter.send(Message { from: id, input }),
+                Err(_) => {
+                    end_reason = ClientInput::StreamErrored;
+                    break 'connected;
+                }
+            };
+        }
 
         thread::sleep(THREAD_SLOW_DOWN);
     }
