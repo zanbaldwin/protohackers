@@ -1,11 +1,8 @@
 [package]
-name = "speed"
+name = "testing"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-common = { path = "../common" }
-uuid = { version = "^1.2", features = ["v4"] }
-testing = { path = "../testing" }
