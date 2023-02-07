@@ -1,5 +1,5 @@
 extern crate uuid;
-mod app;
+pub mod app;
 mod handles;
 mod io;
 mod types;

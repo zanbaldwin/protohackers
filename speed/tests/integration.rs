@@ -5,14 +5,28 @@
 
 #[cfg(test)]
 mod test {
+    use common::get_tcp_listener;
+    use speed::app::Application;
+    use std::thread;
     use testing::{
-        assert_client_not_receives_bytes, assert_client_receives_bytes, send_bytes_from,
-        setup_connection,
+        assert_client_not_receives_bytes, assert_client_receives_bytes, connect,
+        find_available_port, hex_str_to_u8s, send_bytes_from,
     };
+
+    fn setup() -> u16 {
+        let Some(port) = find_available_port() else {
+            panic!("Could not find an available port to run integration tests.");
+        };
+        let listener = get_tcp_listener(Some(port));
+        thread::spawn(move || Application::new(listener).run());
+        port
+    }
 
     #[test]
     fn no_heartbeat() {
-        let client = setup_connection();
+        let port = setup();
+
+        let mut client = connect(port);
 
         send_bytes_from!(client, "40 00 00 00 00");
         assert_client_not_receives_bytes!(
@@ -24,7 +38,8 @@ mod test {
 
     #[test]
     fn some_heartbeat() {
-        let client = setup_connection();
+        let port = setup();
+        let mut client = connect(port);
 
         send_bytes_from!(client, "40 00 00 00 0a");
         assert_client_receives_bytes!(
@@ -36,9 +51,11 @@ mod test {
 
     #[test]
     fn car() {
-        let camera_one = setup_connection();
-        let camera_two = setup_connection();
-        let dispatcher = setup_connection();
+        let port = setup();
+        let mut camera_one = connect(port);
+        let mut camera_two = connect(port);
+        let mut dispatcher = connect(port);
+
         send_bytes_from!(camera_one, "80 03 11 0c 9d 00 64");
         send_bytes_from!(camera_two, "80 03 11 0c a7 00 64");
         send_bytes_from!(dispatcher, "80 01");
@@ -54,17 +71,19 @@ mod test {
 
     #[test]
     fn multiple_tickets() {
-        let broken_camera = setup_connection();
+        let port = setup();
+
+        let mut broken_camera = connect(port);
         send_bytes_from!(broken_camera, "80 00 00");
 
-        let first_camera = setup_connection();
+        let mut first_camera = connect(port);
         send_bytes_from!(first_camera, "80 1a 47 0d 18 00 50");
-        let second_camera = setup_connection();
+        let mut second_camera = connect(port);
         send_bytes_from!(second_camera, "80 1a 47 0d 23 00 50");
-        let third_camera = setup_connection();
+        let mut third_camera = connect(port);
         send_bytes_from!(third_camera, "80 1a 47 0d 2e 00 50");
 
-        let dispatcher = setup_connection();
+        let mut dispatcher = connect(port);
         send_bytes_from!(dispatcher, "80 01");
 
         send_bytes_from!(second_camera, "20 07 52 56 36 30 55 58 50 02 16 d0 8f");
@@ -80,9 +99,10 @@ mod test {
 
     #[test]
     fn multiple_cars() {
-        let first_camera = setup_connection();
-        let second_camera = setup_connection();
-        let dispatcher = setup_connection();
+        let port = setup();
+        let mut first_camera = connect(port);
+        let mut second_camera = connect(port);
+        let mut dispatcher = connect(port);
 
         send_bytes_from!(first_camera, "80 a7 22 00 0a 00 3c");
         send_bytes_from!(second_camera, "80 a7 22 04 ca 00 3c");
