@@ -3,7 +3,7 @@ use std::io::{ErrorKind, Read, Write};
 use std::net::{Shutdown, TcpStream};
 
 fn main() {
-    run(handle_stream_buffer, None, false);
+    run(handle_stream_immediate, None, false);
 }
 
 // Smoke Test (Echo Server)

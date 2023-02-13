@@ -1,6 +1,7 @@
 use crate::{
+    app::Application,
     io::{ClientInput, Message, ServerOutput},
-    utils, Application,
+    utils,
 };
 use common::{BUFFER_SIZE, THREAD_SLOW_DOWN};
 use std::io::{ErrorKind, Read};

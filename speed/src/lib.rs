@@ -1,12 +1,11 @@
 extern crate uuid;
-pub mod app;
+mod app;
 mod handles;
 mod io;
 mod types;
 mod utils;
 
-use crate::app::Application;
-use common::get_tcp_listener;
+pub use app::Application;
 use std::cmp::{max, min};
 use std::net::TcpStream;
 use uuid::Uuid;
@@ -116,9 +115,4 @@ impl Connection {
             heartbeat: None,
         }
     }
-}
-
-fn main() {
-    let listener = get_tcp_listener(None);
-    Application::new().run(listener);
 }

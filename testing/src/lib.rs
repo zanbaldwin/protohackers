@@ -1,14 +1,27 @@
 use std::net::{TcpListener, TcpStream};
 
-pub fn find_available_port() -> Option<u16> {
-    (8000..u16::MAX).find(|port| match TcpListener::bind(("127.0.0.1", *port)) {
-        Ok(_) => true,
-        Err(_) => false,
-    })
+pub fn listen_on_available_port() -> (TcpListener, u16) {
+    let Ok(listener) = TcpListener::bind(("127.0.0.1", 0)) else {
+        panic!("Could not find an available port to run integration tests.");
+    };
+    let Ok(addr) = listener.local_addr() else {
+        panic!("Could not determine OS-assigned port.");
+    };
+    println!(
+        "Integration test: running application on port {}.",
+        addr.port()
+    );
+    (listener, addr.port())
 }
 
 pub fn connect(port: u16) -> TcpStream {
-    TcpStream::connect(("127.0.0.1", port)).expect("Could not connect to integration server.")
+    let stream =
+        TcpStream::connect(("127.0.0.1", port)).expect("Could not connect to integration server.");
+    // TODO: Does this need to be non-blocking?
+    stream
+        .set_nonblocking(true)
+        .expect("Could not set stream to non-blocking.");
+    stream
 }
 
 pub fn u8s_to_hex_str(bytes: &[u8]) -> String {
@@ -49,35 +62,35 @@ macro_rules! send_bytes_from {
 macro_rules! assert_client_receives_bytes (
     ($s:expr, $h:expr, $d:expr) => {{
         use std::io::Read;
-        use std::time::Duration;
 
         let client = &mut $s;
-        let bytes = $crate::hex_str_to_u8s($h).expect("Invalid hex code provided for integration test.");
-        let mut buffer: Vec<u8> = Vec::new();
         client.set_read_timeout(Some($d)).expect("Could not set read timeout.");
-        match client.take(bytes.len() as u64).read_to_end(&mut buffer) {
-            Err(e)  => panic!("Client connection errored: {e:?}"),
-            Ok(_) => assert_eq!(bytes, buffer),
-        };
-        client.set_read_timeout(None).expect("Could not unset read timeout.");
-    }};
-    ($s:expr, $h:expr) => {{
-        use std::io::Read;
-        use std::time::Duration;
 
-        let client = &mut $s;
         let bytes = $crate::hex_str_to_u8s($h).expect("Invalid hex code provided for integration test.");
-        let mut buffer: Vec<u8> = Vec::new();
-        client.set_read_timeout(Some(Duration::from_secs(1))).expect("Could not set read timeout.");
-        match client.take(bytes.len() as u64).read_to_end(&mut buffer) {
-            Err(e)  => panic!("Client connection errored: {e:?}"),
-            Ok(_) => assert_eq!(bytes, buffer),
-        };
+        let mut reader = client.take(bytes.len() as u64);
+        let mut payload: Vec<u8> = ::std::vec::Vec::with_capacity(bytes.len());
+        let mut buffer = [0u8; 512];
+
+        let now = ::std::time::Instant::now();
+        loop {
+            match reader.read(&mut buffer) {
+                Err(ref e) if e.kind() == ::std::io::ErrorKind::WouldBlock => (),
+                Err(e)  => panic!("Client connection errored: {e:?}"),
+                Ok(0) => panic!("Client connection dropped."),
+                Ok(n) => {
+                    payload.extend_from_slice(&buffer[..n]);
+                    if payload.len() >= bytes.len() {
+                        break;
+                    }
+                },
+            };
+            if now.elapsed() > $d {
+                panic!("Timeout reached waiting for expected payload.");
+            }
+            // Don't hog the CPU core.
+            ::std::thread::sleep(::std::time::Duration::from_millis(1));
+        }
+        assert_eq!(&bytes, &payload[..bytes.len()]);
         client.set_read_timeout(None).expect("Could not unset read timeout.");
     }};
-);
-
-#[macro_export]
-macro_rules! assert_client_not_receives_bytes (
-    ($s:expr, $h:expr, $d:expr) => {};
 );

@@ -1,4 +1,5 @@
 use crate::{types, utils, Ticket};
+use std::fmt::Display;
 use std::io::Write;
 use std::net::TcpStream;
 use uuid::Uuid;
@@ -26,15 +27,7 @@ impl ServerOutput {
         let mut response: Vec<u8> = Vec::new();
         match self {
             Self::Error(error) => {
-                let error_string = match error {
-                    ServerError::Unknown => "Unknown Error",
-                    ServerError::AlreadyDeclared => "Type Already Declared",
-                    ServerError::NotDeclared => "Type Not Declared",
-                    ServerError::AlreadyBeating => "Heartbeat Already Requested",
-                    ServerError::NotACamera => "Not A Camera",
-                    ServerError::InvalidStream => "Invalid Stream",
-                }
-                .to_string();
+                let error_string = error.as_str();
                 response.push(types::MESSAGE_TYPE_ERROR);
                 response.push(error_string.len() as u8);
                 response.extend_from_slice(error_string.as_bytes());
@@ -64,4 +57,21 @@ pub(crate) enum ServerError {
     AlreadyBeating,
     NotACamera,
     InvalidStream,
+}
+impl ServerError {
+    fn as_str(&self) -> &'static str {
+        match self {
+            ServerError::Unknown => "Unknown Error",
+            ServerError::AlreadyDeclared => "Type Already Declared",
+            ServerError::NotDeclared => "Type Not Declared",
+            ServerError::AlreadyBeating => "Heartbeat Already Requested",
+            ServerError::NotACamera => "Not A Camera",
+            ServerError::InvalidStream => "Invalid Stream",
+        }
+    }
+}
+impl Display for ServerError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
 }

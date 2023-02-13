@@ -1,52 +1,35 @@
 /**
  * Integration tests for Speed Daemon.
  * Unit test belong at the bottom of source files.
+ *
+ * Lesson I learnt getting this to work: integration tests (a `tests/` folder) will only work for LIBRARIES not BINARIES.
+ * So change `main.rs` to `lib.rs` and then create a `bin/main.rs`, which has to IMPORT (extern crate) the library that was just created.
  */
 
 #[cfg(test)]
 mod test {
-    use common::get_tcp_listener;
-    use speed::app::Application;
+    use speed::Application;
     use std::thread;
+    use std::time::Duration;
     use testing::{
-        assert_client_not_receives_bytes, assert_client_receives_bytes, connect,
-        find_available_port, hex_str_to_u8s, send_bytes_from,
+        assert_client_receives_bytes, connect, listen_on_available_port, send_bytes_from,
     };
 
+    const DEFAULT_TIMEOUT: Duration = Duration::from_millis(500);
+
     fn setup() -> u16 {
-        let Some(port) = find_available_port() else {
-            panic!("Could not find an available port to run integration tests.");
-        };
-        let listener = get_tcp_listener(Some(port));
-        thread::spawn(move || Application::new(listener).run());
+        let (listener, port) = listen_on_available_port();
+        thread::spawn(move || Application::new().run(listener));
         port
     }
 
     #[test]
-    fn no_heartbeat() {
-        let port = setup();
-
-        let mut client = connect(port);
-
-        send_bytes_from!(client, "40 00 00 00 00");
-        assert_client_not_receives_bytes!(
-            client,
-            "41",
-            /* timeout: */ Duration::from_millis(500)
-        );
-    }
-
-    #[test]
-    fn some_heartbeat() {
+    fn heartbeat() {
         let port = setup();
         let mut client = connect(port);
 
         send_bytes_from!(client, "40 00 00 00 0a");
-        assert_client_receives_bytes!(
-            client,
-            "41",
-            /* timeout: */ Duration::from_millis(1100)
-        );
+        assert_client_receives_bytes!(client, "41", Duration::from_millis(1100));
     }
 
     #[test]
@@ -65,7 +48,8 @@ mod test {
 
         assert_client_receives_bytes!(
             dispatcher,
-            "21 07 56 48 30 30 4a 52 57 03 11 0c 9d 00 0a 61 0d 0c a7 00 0a 62 39 2e e0"
+            "21 07 56 48 30 30 4a 52 57 03 11 0c 9d 00 0a 61 0d 0c a7 00 0a 62 39 2e e0",
+            DEFAULT_TIMEOUT
         );
     }
 
@@ -93,7 +77,8 @@ mod test {
 
         assert_client_receives_bytes!(
             dispatcher,
-            "21 07 52 56 36 30 55 58 50 1a 47 0d 18 02 16 cf 61 0d 23 02 16 d0 8f 33 2c"
+            "21 07 52 56 36 30 55 58 50 1a 47 0d 18 02 16 cf 61 0d 23 02 16 d0 8f 33 2c",
+            DEFAULT_TIMEOUT
         );
     }
 
@@ -115,15 +100,18 @@ mod test {
 
         assert_client_receives_bytes!(
             dispatcher,
-            "21 07 47 55 30 38 51 45 54 a7 22 00 0a 00 f7 88 36 04 ca 00 f8 74 5e 1c 20"
+            "21 07 47 55 30 38 51 45 54 a7 22 00 0a 00 f7 88 36 04 ca 00 f8 74 5e 1c 20",
+            DEFAULT_TIMEOUT
         );
         assert_client_receives_bytes!(
             dispatcher,
-            "21 07 4e 58 32 31 4a 51 53 a7 22 00 0a 00 f7 87 ad 04 ca 00 f8 32 ad 27 10"
+            "21 07 4e 58 32 31 4a 51 53 a7 22 00 0a 00 f7 87 ad 04 ca 00 f8 32 ad 27 10",
+            DEFAULT_TIMEOUT
         );
         assert_client_receives_bytes!(
             dispatcher,
-            "21 07 50 50 34 37 41 44 4c a7 22 00 0a 00 f7 88 11 04 ca 00 f8 62 bc 1e 78"
+            "21 07 50 50 34 37 41 44 4c a7 22 00 0a 00 f7 88 11 04 ca 00 f8 62 bc 1e 78",
+            DEFAULT_TIMEOUT
         );
     }
 }

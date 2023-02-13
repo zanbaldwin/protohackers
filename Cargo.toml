@@ -7,6 +7,7 @@ members = [
     "db",
     "mob",
     "speed",
+    "testing",
 ]
 
 [profile.release]

@@ -11,14 +11,14 @@ use std::thread;
 use std::time::Duration;
 use uuid::Uuid;
 
-pub(crate) struct Application {
+pub struct Application {
     connections: HashMap<Uuid, Connection>,
     pending_tickets: HashMap<types::RoadId, Vec<Ticket>>,
     reports: HashMap<types::PlateNumber, Report>,
     days_issued: types::IssuedTickets,
 }
 impl Application {
-    pub(crate) fn new() -> Self {
+    pub fn new() -> Self {
         Self {
             connections: HashMap::new(),
             pending_tickets: HashMap::new(),
@@ -27,7 +27,7 @@ impl Application {
         }
     }
 
-    pub(crate) fn run(mut self, listener: TcpListener) -> ! {
+    pub fn run(mut self, listener: TcpListener) -> ! {
         let (conn_tx, conn_rx) = mpsc::channel::<Message>();
         loop {
             // Accept connection.
@@ -60,7 +60,7 @@ impl Application {
         }
     }
 
-    pub(crate) fn handle_message(&mut self, message: Message) {
+    fn handle_message(&mut self, message: Message) {
         if let Some(connection) = self.connections.get_mut(&message.from) {
             println!("{}: {:?}", connection.id, message.input);
             match message.input {
@@ -156,7 +156,7 @@ impl Application {
         }
     }
 
-    pub(crate) fn process_report(&mut self, report: Report) -> Option<Ticket> {
+    fn process_report(&mut self, report: Report) -> Option<Ticket> {
         let previous: Option<Report> = self.reports.remove(&report.plate);
         self.reports.insert(report.plate.clone(), report.clone());
 
@@ -171,7 +171,7 @@ impl Application {
         None
     }
 
-    pub(crate) fn issue_ticket(&mut self, ticket: Ticket) {
+    fn issue_ticket(&mut self, ticket: Ticket) {
         let dispatcher_id_for_road: Option<Uuid> = self
             .connections
             .iter()
@@ -197,7 +197,7 @@ impl Application {
         }
     }
 
-    pub(crate) fn close_connection(&mut self, id: &Uuid, error: Option<ServerError>) {
+    fn close_connection(&mut self, id: &Uuid, error: Option<ServerError>) {
         if let Some(connection) = self.connections.get_mut(id) {
             if let Some(error) = error {
                 println!("ERROR ({}): {error:?}", connection.id);
@@ -227,7 +227,7 @@ impl Application {
         result
     }
 
-    pub(crate) fn process_buffer_plate(buffer: &[u8]) -> types::BufferMatch {
+    fn process_buffer_plate(buffer: &[u8]) -> types::BufferMatch {
         if let Some(plate_length) = buffer.get(1) {
             let plate_length = plate_length.to_owned() as usize;
             let drain = 1 + 1 + plate_length + 4;
@@ -249,7 +249,7 @@ impl Application {
         }
     }
 
-    pub(crate) fn process_buffer_heartbeat(buffer: &[u8]) -> types::BufferMatch {
+    fn process_buffer_heartbeat(buffer: &[u8]) -> types::BufferMatch {
         let drain = 5;
         if buffer.len() >= drain {
             let message = &buffer[..drain];
@@ -263,7 +263,7 @@ impl Application {
         }
     }
 
-    pub(crate) fn process_buffer_camera(buffer: &[u8]) -> types::BufferMatch {
+    fn process_buffer_camera(buffer: &[u8]) -> types::BufferMatch {
         let drain: usize = 7;
         if buffer.len() >= drain {
             let message = &buffer[..drain];
@@ -283,7 +283,7 @@ impl Application {
         }
     }
 
-    pub(crate) fn process_buffer_dispatcher(buffer: &[u8]) -> types::BufferMatch {
+    fn process_buffer_dispatcher(buffer: &[u8]) -> types::BufferMatch {
         if let Some(road_count) = buffer.get(1) {
             let road_count = road_count.to_owned() as usize;
             let drain = 1 + 1 + (road_count * 2);
