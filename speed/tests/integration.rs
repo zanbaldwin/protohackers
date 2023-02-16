@@ -40,9 +40,17 @@ mod test {
         let mut camera_two = connect(port);
         let mut dispatcher = connect(port);
 
-        thread::sleep(Duration::from_millis(50));
+        // send_bytes_from!(camera_one, "80 03 11 0c 9d 00 64");
+        {
+            use ::std::io::Write;
+            camera_one
+                .write_all(
+                    &testing::hex_str_to_u8s("80 03 11 0c 9d 00 64")
+                        .expect("Invalid hex code provided for integration test."),
+                )
+                .expect("Could not write bytes to application.");
+        }
 
-        send_bytes_from!(camera_one, "80 03 11 0c 9d 00 64");
         send_bytes_from!(camera_two, "80 03 11 0c a7 00 64");
         send_bytes_from!(dispatcher, "81 01");
         send_bytes_from!(camera_one, "20 07 56 48 30 30 4a 52 57 00 0a 61 0d");
@@ -54,7 +62,6 @@ mod test {
         //     "21 07 56 48 30 30 4a 52 57 03 11 0c 9d 00 0a 61 0d 0c a7 00 0a 62 39 2e e0",
         //     DEFAULT_TIMEOUT
         // );
-
         {
             use std::io::Read;
             let hex = "21 07 56 48 30 30 4a 52 57 03 11 0c 9d 00 0a 61 0d 0c a7 00 0a 62 39 2e e0";
