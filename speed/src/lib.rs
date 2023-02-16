@@ -9,11 +9,13 @@ use crate::{
     models::{Camera, Client, Connection, Dispatcher, Report, Ticket},
 };
 use common::THREAD_SLOW_DOWN;
-use std::collections::HashMap;
-use std::net::{Shutdown, TcpListener};
-use std::sync::mpsc;
-use std::thread;
-use std::time::Duration;
+use std::{
+    collections::HashMap,
+    net::{Shutdown, TcpListener},
+    sync::mpsc,
+    thread,
+    time::Duration,
+};
 use uuid::Uuid;
 
 const SPEED_ERROR_MARGIN: f32 = 0.4;
@@ -31,8 +33,6 @@ pub(crate) type SpeedMph = f32;
 pub(crate) type PlateNumber = Vec<u8>;
 pub(crate) type BufferMatch = Result<Option<(ClientInput, usize)>, ()>;
 pub(crate) type IssuedTickets = HashMap<Vec<u8>, Vec<u32>>;
-
-//////////////////////////////////
 
 #[derive(Default)]
 pub struct Application {
@@ -89,24 +89,21 @@ impl Application {
                             plate_number,
                             timestamp,
                             camera.road,
-                            camera.mile_marker,
+                            camera.mile,
                             camera.limit,
                         );
                         if let Some(ticket) = self.process_report(report) {
-                            let mut can_issue: bool = true;
-
+                            let mut issue: bool = true;
                             let already_issued_days = self
                                 .days_issued
                                 .entry(ticket.plate.clone())
                                 .or_insert(vec![]);
                             for applicable_day in ticket.get_days_applicable_to() {
-                                if already_issued_days.contains(&applicable_day) {
-                                    can_issue = false;
-                                }
+                                issue = issue && !already_issued_days.contains(&applicable_day);
                                 already_issued_days.push(applicable_day);
                             }
 
-                            if can_issue {
+                            if issue {
                                 self.issue_ticket(ticket);
                             }
                         }
@@ -117,44 +114,33 @@ impl Application {
 
                 ClientInput::WantHeartbeat(deciseconds) => {
                     if connection.heartbeat.is_some() {
-                        return self
-                            .close_connection(&message.from, Some(ServerError::AlreadyBeating));
+                        self.close_connection(&message.from, Some(ServerError::AlreadyBeating));
+                        return;
                     }
 
-                    connection.heartbeat = Some(deciseconds);
                     if deciseconds > 0 {
-                        let heartbeat_stream = match connection.stream.try_clone() {
-                            Ok(stream) => stream,
-                            Err(_) => {
-                                self.close_connection(&message.from, Some(ServerError::Unknown));
-                                return;
-                            }
+                        let Ok(heartbeat_stream) = connection.stream.try_clone() else {
+                            self.close_connection(&message.from, Some(ServerError::Unknown));
+                            return;
                         };
                         let interval = Duration::from_millis((deciseconds as u64) * 100);
-                        println!(
-                            "Pinging {} every {interval:?}.",
-                            heartbeat_stream.peer_addr().unwrap()
-                        );
                         thread::spawn(move || handles::heartbeat(heartbeat_stream, interval));
                     }
+                    connection.heartbeat = Some(deciseconds);
                 }
 
-                ClientInput::IAmCamera(road, mile_marker, limit) => {
+                ClientInput::IAmCamera(road, mile, limit) => {
                     if connection.client.is_some() {
-                        return self
-                            .close_connection(&message.from, Some(ServerError::AlreadyDeclared));
+                        self.close_connection(&message.from, Some(ServerError::AlreadyDeclared));
+                        return;
                     }
-                    connection.client = Some(Client::Camera(Camera {
-                        road,
-                        mile_marker,
-                        limit,
-                    }));
+                    connection.client = Some(Client::Camera(Camera { road, mile, limit }));
                 }
 
                 ClientInput::IAmDispatcher(roads) => {
                     if connection.client.is_some() {
-                        return self
-                            .close_connection(&message.from, Some(ServerError::AlreadyDeclared));
+                        self.close_connection(&message.from, Some(ServerError::AlreadyDeclared));
+                        return;
                     }
                     let dispatcher = Dispatcher { roads };
                     for road in &dispatcher.roads {
@@ -191,7 +177,7 @@ impl Application {
     }
 
     fn issue_ticket(&mut self, ticket: Ticket) {
-        let dispatcher_id_for_road: Option<Uuid> = self
+        if let Some(dispatcher_id) = self
             .connections
             .iter()
             .filter(|(_id, connection)| -> bool {
@@ -201,19 +187,17 @@ impl Application {
                 false
             })
             .map(|(id, _)| id.to_owned())
-            .next();
-
-        if let Some(dispatcher_id) = dispatcher_id_for_road {
+            .next()
+        {
             if let Some(connection) = self.connections.get_mut(&dispatcher_id) {
                 ServerOutput::Ticket(ticket.clone()).write(&mut connection.stream);
+                return;
             }
         }
-
-        if let Some(pending_tickets) = self.pending_tickets.get_mut(&ticket.road) {
-            pending_tickets.push(ticket);
-        } else {
-            self.pending_tickets.insert(ticket.road, vec![ticket]);
-        }
+        self.pending_tickets
+            .entry(ticket.road)
+            .or_insert(Vec::new())
+            .push(ticket);
     }
 
     fn close_connection(&mut self, id: &Uuid, error: Option<ServerError>) {

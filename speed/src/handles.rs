@@ -12,7 +12,7 @@ use uuid::Uuid;
 pub(crate) fn connection(id: Uuid, mut stream: TcpStream, transmitter: Sender<Message>) {
     let mut buffer = [0u8; BUFFER_SIZE];
     let mut queue: Vec<u8> = Vec::new();
-    let mut parse: bool = false;
+    let mut parse = false;
 
     let end_reason: ClientInput;
     'connected: loop {
@@ -43,8 +43,7 @@ pub(crate) fn connection(id: Uuid, mut stream: TcpStream, transmitter: Sender<Me
                         _ = transmitter.send(Message { from: id, input });
                         queue.drain(..drain);
                     }
-                    Err(e) => {
-                        println!("{e:?}");
+                    Err(_) => {
                         end_reason = ClientInput::StreamErrored;
                         break 'connected;
                     }

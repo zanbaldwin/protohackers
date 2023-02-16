@@ -39,9 +39,9 @@ impl ServerOutput {
                 response.push(ticket.plate.len() as u8);
                 response.extend(&ticket.plate);
                 response.extend_from_slice(&ticket.road.to_be_bytes());
-                response.extend_from_slice(&ticket.report1.mile_marker.to_be_bytes());
+                response.extend_from_slice(&ticket.report1.mile.to_be_bytes());
                 response.extend_from_slice(&ticket.report1.timestamp.to_be_bytes());
-                response.extend_from_slice(&ticket.report2.mile_marker.to_be_bytes());
+                response.extend_from_slice(&ticket.report2.mile.to_be_bytes());
                 response.extend_from_slice(&ticket.report2.timestamp.to_be_bytes());
                 response.extend_from_slice(&ticket.speed.to_be_bytes());
             }

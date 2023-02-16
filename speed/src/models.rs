@@ -6,7 +6,7 @@ use uuid::Uuid;
 
 pub(crate) struct Camera {
     pub(crate) road: u16,
-    pub(crate) mile_marker: u16,
+    pub(crate) mile: u16,
     pub(crate) limit: u16,
 }
 pub(crate) struct Dispatcher {
@@ -22,7 +22,7 @@ pub(crate) struct Report {
     pub(crate) plate: PlateNumber,
     pub(crate) road: u16,
     pub(crate) timestamp: u32,
-    pub(crate) mile_marker: u16,
+    pub(crate) mile: u16,
     pub(crate) limit: u16,
 }
 impl Report {
@@ -30,23 +30,22 @@ impl Report {
         plate: PlateNumber,
         timestamp: u32,
         road: u16,
-        mile_marker: u16,
+        mile: u16,
         limit: u16,
     ) -> Self {
         Self {
             plate,
             timestamp,
             road,
-            mile_marker,
+            mile,
             limit,
         }
     }
 
     pub(crate) fn calculate_speed(&self, previous: &Self) -> Option<SpeedMph> {
         if self.road == previous.road {
-            let distance_in_miles: f32 = (max(self.mile_marker, previous.mile_marker)
-                - min(self.mile_marker, previous.mile_marker))
-                as f32;
+            let distance_in_miles: f32 =
+                (max(self.mile, previous.mile) - min(self.mile, previous.mile)) as f32;
             let seconds_taken: f32 = (max(self.timestamp, previous.timestamp)
                 - min(self.timestamp, previous.timestamp))
                 as f32;
