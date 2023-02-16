@@ -22,16 +22,11 @@ THIS_MAKEFILE:=$(notdir $(THIS_MAKEFILE_PATH))
 ## Build
 
 TARGET := x86_64-unknown-linux-gnu
-BINARIES := echo primes keystore chat db mob speed
 shrink: ## Build Tiny Distibution Binaries
 shrink:
 > rustup target add "$(TARGET)"
 > rustup toolchain install nightly
 > rustup component add rust-src --toolchain nightly
 > cargo +nightly build -Z "build-std=std,panic_abort" --target "$(TARGET)" --release
-> for BINARY in $(BINARIES); do
->     rm -f "$(THIS_DIR)/target/$${BINARY}"
->     upx --best -o "$(THIS_DIR)/target/$${BINARY}" "$(THIS_DIR)/target/$(TARGET)/release/$${BINARY}"
-> done
 .PHONY: shrink
 .SILENT: shrink
