@@ -50,18 +50,18 @@ pub fn hex_str_to_u8s(hex: &str) -> Result<Vec<u8>, ()> {
 #[macro_export]
 macro_rules! send_bytes_from {
     ($s:expr, $h:expr) => {{
-        // use crate::hex_str_to_u8s;
-        use std::io::Write;
+        use ::std::io::Write;
         _ = $s.write_all(
             &$crate::hex_str_to_u8s($h).expect("Invalid hex code provided for integration test."),
         );
+        ::std::thread::sleep(::std::time::Duration::from_millis(5));
     }};
 }
 
 #[macro_export]
 macro_rules! assert_client_receives_bytes (
     ($s:expr, $h:expr, $d:expr) => {{
-        use std::io::Read;
+        use ::std::io::Read;
 
         let client = &mut $s;
         client.set_read_timeout(Some($d)).expect("Could not set read timeout.");
