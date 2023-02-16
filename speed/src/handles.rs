@@ -1,7 +1,6 @@
 use crate::{
-    app::Application,
     io::{ClientInput, Message, ServerOutput},
-    utils,
+    parser, utils,
 };
 use common::{BUFFER_SIZE, THREAD_SLOW_DOWN};
 use std::io::{ErrorKind, Read};
@@ -13,6 +12,7 @@ use uuid::Uuid;
 pub(crate) fn connection(id: Uuid, mut stream: TcpStream, transmitter: Sender<Message>) {
     let mut buffer = [0u8; BUFFER_SIZE];
     let mut queue: Vec<u8> = Vec::new();
+    let mut parse: bool = false;
 
     let end_reason: ClientInput;
     'connected: loop {
@@ -22,6 +22,7 @@ pub(crate) fn connection(id: Uuid, mut stream: TcpStream, transmitter: Sender<Me
                 break 'connected;
             }
             Ok(n) => {
+                parse = true;
                 queue.extend_from_slice(&buffer[..n]);
                 eprintln!("{id}: {}", utils::u8s_to_hex_str(&buffer[..n]));
             }
@@ -32,15 +33,23 @@ pub(crate) fn connection(id: Uuid, mut stream: TcpStream, transmitter: Sender<Me
             }
         };
 
-        'parse: loop {
-            match Application::parse_input_buffer(&mut queue) {
-                Ok(None) => break 'parse,
-                Ok(Some(input)) => _ = transmitter.send(Message { from: id, input }),
-                Err(_) => {
-                    end_reason = ClientInput::StreamErrored;
-                    break 'connected;
+        if parse {
+            parse = false;
+            'parse: loop {
+                match parser::nom(&queue) {
+                    // Not enough data has been received by the TCP stream, go back and fetch more.
+                    Ok(None) => break 'parse,
+                    Ok(Some((input, drain))) => {
+                        _ = transmitter.send(Message { from: id, input });
+                        queue.drain(..drain);
+                    }
+                    Err(e) => {
+                        println!("{e:?}");
+                        end_reason = ClientInput::StreamErrored;
+                        break 'connected;
+                    }
                 }
-            };
+            }
         }
 
         thread::sleep(THREAD_SLOW_DOWN);

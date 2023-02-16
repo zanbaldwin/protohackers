@@ -1,15 +1,17 @@
-use crate::{types, utils, Ticket};
+use crate::{
+    utils, PlateNumber, Ticket, MESSAGE_TYPE_ERROR, MESSAGE_TYPE_HEARTBEAT, MESSAGE_TYPE_TICKET,
+};
 use std::fmt::Display;
 use std::io::Write;
 use std::net::TcpStream;
 use uuid::Uuid;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub(crate) enum ClientInput {
-    Plate(types::PlateNumber, types::Timestamp),
-    WantHeartbeat(types::HeartbeatInterval),
-    IAmCamera(types::RoadId, types::MileMarker, types::SpeedLimit),
-    IAmDispatcher(Vec<types::RoadId>),
+    Plate(PlateNumber, u32),
+    WantHeartbeat(u32),
+    IAmCamera(u16, u16, u16),
+    IAmDispatcher(Vec<u16>),
     StreamEnded,
     StreamErrored,
 }
@@ -28,12 +30,12 @@ impl ServerOutput {
         match self {
             Self::Error(error) => {
                 let error_string = error.as_str();
-                response.push(types::MESSAGE_TYPE_ERROR);
+                response.push(MESSAGE_TYPE_ERROR);
                 response.push(error_string.len() as u8);
                 response.extend_from_slice(error_string.as_bytes());
             }
             Self::Ticket(ticket) => {
-                response.push(types::MESSAGE_TYPE_TICKET);
+                response.push(MESSAGE_TYPE_TICKET);
                 response.push(ticket.plate.len() as u8);
                 response.extend(&ticket.plate);
                 response.extend_from_slice(&ticket.road.to_be_bytes());
@@ -43,7 +45,7 @@ impl ServerOutput {
                 response.extend_from_slice(&ticket.report2.timestamp.to_be_bytes());
                 response.extend_from_slice(&ticket.speed.to_be_bytes());
             }
-            Self::Heartbeat => response.push(types::MESSAGE_TYPE_HEARTBEAT),
+            Self::Heartbeat => response.push(MESSAGE_TYPE_HEARTBEAT),
         };
         eprintln!(">>> {}", utils::u8s_to_hex_str(&response));
         stream.write_all(&response).is_ok()
