@@ -1,10 +1,6 @@
-use common::{run, BUFFER_SIZE};
+use common::BUFFER_SIZE;
 use std::io::{ErrorKind, Read, Write};
 use std::net::{Shutdown, TcpStream};
-
-fn main() {
-    run(handle_stream_immediate, None, false);
-}
 
 // Smoke Test (Echo Server)
 pub fn handle_stream_buffer(mut stream: TcpStream) {
