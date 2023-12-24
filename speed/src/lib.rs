@@ -2,6 +2,7 @@ use crate::error::Error;
 use crate::models::io::{ClientInput, ClientMessage, ServerMessage, ServerOutput};
 use crate::utils::u8s_to_hex_str;
 use std::collections::HashMap;
+use std::sync::{Arc, Mutex};
 use std::time::Duration;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::{
@@ -20,7 +21,6 @@ mod parser;
 pub(crate) mod utils;
 
 const BUFFER_SIZE: usize = 4096;
-
 const SPEED_ERROR_MARGIN: f32 = 0.4;
 const DAY_IN_SECONDS: u32 = 86_400;
 
@@ -46,15 +46,31 @@ pub struct Application {
     // reports: HashMap<PlateNumber, Report>,
 }
 impl Application {
-    async fn run(mut self, listener: TcpListener) -> ! {
-        let (send_incoming, receive_incoming) = channel(BUFFER_SIZE);
-        let (send_outgoing, receive_outgoing) = channel(BUFFER_SIZE);
+    // pub async fn run(self: Arc<Self>) {
+    //     let socket = UdpSocket::bind(&self.addr).await.unwrap();
+    //     loop {
+    //         let mut buf: &mut [u8] = &mut [];
+    //         let (_, _) = socket.recv_from(&mut buf).await.unwrap();
+    //
+    //         tokio::spawn({
+    //             let me = Arc::clone(&self);
+    //             async move {
+    //                 let datagram = me.deserialize_datagram(buf).await;
+    //                 me.handle_datagram(datagram).await;
+    //             }
+    //         });
+    //     }
+    // }
+
+    async fn run(mut self: Arc<Self>, listener: TcpListener) -> ! {
+        let (send_incoming, receive_incoming) = channel::<ClientMessage>(BUFFER_SIZE);
+        let (send_outgoing, receive_outgoing) = channel::<ServerMessage>(BUFFER_SIZE);
 
         tokio::spawn(self.handle_outgoing_messages(receive_outgoing));
         tokio::spawn(self.handle_messages(receive_incoming, send_outgoing));
 
         'run: loop {
-            if let Ok((mut stream, socket)) = listener.accept().await {
+            if let Ok((stream, socket)) = listener.accept().await {
                 let (read_stream, write_stream) = stream.into_split();
                 let id = uuid::Uuid::new_v4();
                 self.write_connections.insert(id.clone(), write_stream);
